@@ -8,12 +8,18 @@
 #include "Camera.h"
 #include"Shape.h"
 #include "Particle.h"
+#include <vector>
 
 class Scene
 {
 private:
 	Shape* shape;
 	Particle* particle;
+	Particle* particle2;
+	Particle* particle3;
+	std::vector<Particle*> particles;
+	
+	
 	Camera* camera;
 	// For Window and frustum calculation.
 	int width, height;

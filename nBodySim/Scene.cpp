@@ -5,6 +5,7 @@
 float angle = 0.0f;
 float x;
 float y;
+float g = 10.0f;
 
 Scene::Scene()
 {
@@ -22,12 +23,21 @@ Scene::Scene()
 	// Other OpenGL / render setting should be applied here.
 	
 	shape = new Shape();
-	particle = new Particle(10.0f, Vector3(0.0f,0.0f,0.0f));
+	particle = new Particle(10.0f, Vector3(-200.0f,50.0f,0.0f));
+
+	particle2 = new Particle(20.0f, Vector3(0.0f, 0.0f, 0.0f));
+	particle3 = new Particle(10.0f, Vector3(200.0f, -70.0f, 0.0f));
 	
+
+
+	particles.push_back(particle);
+	particles.push_back(particle2);
+	particles.push_back(particle3);
+
 	//set camera 
 	camera = new Camera();
 	camera->setCameraLook(Vector3(0.0f, 0.0f, 0.0f));
-	camera->setCameraPos(Vector3(0.0f, 0.0f,-150.0f));
+	camera->setCameraPos(Vector3(0.0f, 0.0f,-750.0f));
 	camera->setCameraUp(Vector3(0, 1, 0));
 	
 }
@@ -42,22 +52,12 @@ void Scene::render(float dt)
 
 	gluLookAt(camera->getCameraPos().getX(), camera->getCameraPos().getY(), camera->getCameraPos().getZ(), camera->getCameraLook().getX(), camera->getCameraLook().getY(), camera->getCameraLook().getZ(), camera->getCameraUp().getX(), camera->getCameraUp().getY(), camera->getCameraUp().getZ());
 
-	//glBegin(GL_TRIANGLES);
+	for (int i = 0; i < particles.size(); i++)
+	{
+		particles[i]->DrawParticle();
+	}
 
-	/*glVertex2f(-0.5f, -0.5f);
-	glVertex2f(0.5f, -0.5f);
-	glVertex2f(0.0f, 0.5f);*/
-
-	/*glVertex2f(-1.5f, -0.5f);
-	glVertex2f(0.5f, -0.5f);
-	glVertex2f(0.0f, 0.5f);*/
-
-	//glTranslatef();
-	////glScalef(0.5, 0.5, 0.5);
-	//shape->renderSphere();
-	particle->DrawParticle();
-
-	//glEnd();
+	
 
 	glutSwapBuffers();
 
@@ -73,9 +73,29 @@ void Scene::update(float dt)
 	
 	x = sinf(angle) * 2.0f;;
 	y = cosf(angle) * 2.0f;;
-	particle->velocity.setX(x);
-	particle->velocity.setZ(y);
-	particle->Update();
+	
+	
+
+
+	for (int i = 0; i < particles.size(); i++)
+	{
+		for (int j = 0; j < particles.size(); j++)
+		{
+			if (j != i)
+			{
+				Vector3 diff = particles[i]->position - particles[j]->position;
+				float dist = diff.length();
+				diff.normalise();
+				particles[i]->velocity = particles[i]->velocity -   diff.dot((g *particles[j]->mass )/dist );
+			}
+		}
+		particles[i]->Update();
+	}
+
+	
+
+
+
 }
 
 void Scene::resize(int w, int h)

@@ -6,8 +6,12 @@ Particle::Particle(float s, Vector3 p)
 {
 	size = s;
 	position = p;
+	mass = size;
 }
 
+Particle::Particle()
+{
+}
 
 Particle::~Particle()
 {
@@ -16,14 +20,15 @@ Particle::~Particle()
 void Particle::DrawParticle()
 {
 
-	//translate to position
-	glTranslatef(position.getX(), position.getY(), position.getZ());
-	//scale to size
-	glScalef(size, size, size);
+
 
 
 	glPushMatrix();
 
+	//translate to position
+	glTranslatef(position.getX(), position.getY(), position.getZ());
+	//scale to size
+	glScalef(size, size, size);
 
 	//renders sphere
 	float angle = (2 * 3.14159) / 20;
