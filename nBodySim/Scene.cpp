@@ -12,6 +12,7 @@ float initSpeed = 1500.0f / (g / 3000.0f);
 
 Scene::Scene()
 {
+	
 	//OpenGL settings
 	glShadeModel(GL_SMOOTH);							// Enable Smooth Shading
 	glClearColor(0.39f, 0.58f, 93.0f, 1.0f);			// Cornflour Blue Background
