@@ -5,7 +5,10 @@
 float angle = 0.0f;
 float x;
 float y;
-float g = 10.0f;
+float d = 1000000.0f;
+float g = 6.67408e-11f/d;
+float initSpeed = 1500.0f / (g / 3000.0f);
+
 
 Scene::Scene()
 {
@@ -21,23 +24,28 @@ Scene::Scene()
 	glDepthFunc(GL_LEQUAL);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);	//blend function settings
 	// Other OpenGL / render setting should be applied here.
-	
-	shape = new Shape();
-	particle = new Particle(10.0f, Vector3(-200.0f,50.0f,0.0f));
 
-	particle2 = new Particle(20.0f, Vector3(0.0f, 0.0f, 0.0f));
-	particle3 = new Particle(10.0f, Vector3(200.0f, -70.0f, 0.0f));
+	d = 1000000.0f;
+	g = 6.67408e-11f / d;
 	
+	particle = new Particle(50.0f, Vector3(0.0f, 1500.0f, 0.0f));
+	particle->mass = 5.972e24f/d;
+	particle2 = new Particle(250.0f, Vector3(0.0f, 0.0f, 0.0f));
+	particle2->mass = 1.989e30f/d;
+	particle3 = new Particle(2.0f, Vector3(140.0f, -100.0f, 0.0f));
+	//particle2->mass = 1000 * 1000;
+	particle->velocity = -300;
+
 
 
 	particles.push_back(particle);
 	particles.push_back(particle2);
-	particles.push_back(particle3);
+	//particles.push_back(particle3);
 
 	//set camera 
 	camera = new Camera();
 	camera->setCameraLook(Vector3(0.0f, 0.0f, 0.0f));
-	camera->setCameraPos(Vector3(0.0f, 0.0f,-750.0f));
+	camera->setCameraPos(Vector3(0.0f, 0.0f,-9850.0f));
 	camera->setCameraUp(Vector3(0, 1, 0));
 	
 }
@@ -85,8 +93,11 @@ void Scene::update(float dt)
 			{
 				Vector3 diff = particles[i]->position - particles[j]->position;
 				float dist = diff.length();
-				diff.normalise();
-				particles[i]->velocity = particles[i]->velocity -   diff.dot((g *particles[j]->mass )/dist );
+				//diff.normalise();
+				float mult = (g * particles[j]->mass) / (dist * dist * dist);
+				Vector3 multDiff = Vector3(mult * diff.getX(), mult * diff.getY(), mult * diff.getZ());
+				particles[i]->velocity = particles[i]->velocity - multDiff;
+
 			}
 		}
 		particles[i]->Update();
@@ -110,7 +121,7 @@ void Scene::resize(int w, int h)
 	float ratio = (float)w / (float)h;
 	fov = 45.0f;
 	nearPlane = 0.1f;
-	farPlane = 1000.0f;
+	farPlane = 100000.0f;
 
 	// Use the Projection Matrix
 	glMatrixMode(GL_PROJECTION);
