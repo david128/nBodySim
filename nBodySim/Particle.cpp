@@ -72,7 +72,8 @@ void Particle::DrawParticle()
 	glPopMatrix();
 }
 
-void Particle::Update()
+void Particle::Update(float dt)
 {
-	position = position + velocity;
+	Vector3 dtV = Vector3((velocity.x * dt), (velocity.y * dt), (velocity.z * dt));
+	position = position +dtV;
 }

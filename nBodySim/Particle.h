@@ -15,6 +15,6 @@ public:
 	Vector3 position;
 	
 	void DrawParticle();
-	void Update();
+	void Update(float dt);
 };
 

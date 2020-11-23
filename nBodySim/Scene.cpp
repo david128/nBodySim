@@ -29,13 +29,13 @@ Scene::Scene()
 	d = 1000000.0f;
 	g = 6.67408e-11f / d;
 	
-	particle = new Particle(50.0f, Vector3(0.0f, 1500.0f, 0.0f));
+	particle = new Particle(50.0f, Vector3(0.0f, 2500.0f, 0.0f));
 	particle->mass = 5.972e24f/d;
 	particle2 = new Particle(250.0f, Vector3(0.0f, 0.0f, 0.0f));
 	particle2->mass = 1.989e30f/d;
 	particle3 = new Particle(2.0f, Vector3(140.0f, -100.0f, 0.0f));
 	//particle2->mass = 1000 * 1000;
-	particle->velocity = -300;
+	particle->velocity = -550;
 
 
 
@@ -53,8 +53,6 @@ Scene::Scene()
 
 void Scene::render(float dt)
 {
-
-
 	// Clear Color and Depth Buffers
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
@@ -65,8 +63,6 @@ void Scene::render(float dt)
 	{
 		particles[i]->DrawParticle();
 	}
-
-	
 
 	glutSwapBuffers();
 
@@ -82,27 +78,45 @@ void Scene::update(float dt)
 	
 	x = sinf(angle) * 2.0f;;
 	y = cosf(angle) * 2.0f;;
-	
-	
 
-
-	for (int i = 0; i < particles.size(); i++)
+	
+	if (time >= 0.2f)
 	{
-		for (int j = 0; j < particles.size(); j++)
+		//update vel
+		for (int i = 0; i < particles.size(); i++)
 		{
-			if (j != i)
+			for (int j = 0; j < particles.size(); j++)
 			{
-				Vector3 diff = particles[i]->position - particles[j]->position;
-				float dist = diff.length();
-				//diff.normalise();
-				float mult = (g * particles[j]->mass) / (dist * dist * dist);
-				Vector3 multDiff = Vector3(mult * diff.getX(), mult * diff.getY(), mult * diff.getZ());
-				particles[i]->velocity = particles[i]->velocity - multDiff;
+				if (j != i)
+				{
+					Vector3 diff = particles[i]->position - particles[j]->position;
+					float dist = diff.length();
+					//diff.normalise();
+					float mult = (g * particles[j]->mass) / (dist * dist * dist);
 
+					Vector3 multDiff = Vector3(mult * diff.getX(), mult * diff.getY(), mult * diff.getZ());
+					particles[i]->velocity = particles[i]->velocity - multDiff;
+
+				}
 			}
+			particles[i]->Update(dt);
 		}
-		particles[i]->Update();
+		time = 0.0f;
 	}
+	else
+	{
+
+		time += dt;
+		for (int i = 0; i < particles.size(); i++)
+		{
+			particles[i]->Update(dt);
+		}
+		
+	}
+
+
+
+
 
 	
 

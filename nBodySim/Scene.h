@@ -25,6 +25,9 @@ private:
 	int width, height;
 	float fov, nearPlane, farPlane;
 
+	float time = 0.0f;
+	
+
 public:
 	Scene();
 	// render function
