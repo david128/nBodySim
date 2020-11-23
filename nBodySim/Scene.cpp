@@ -33,15 +33,20 @@ Scene::Scene()
 	particle->mass = 5.972e24f/d;
 	particle2 = new Particle(250.0f, Vector3(0.0f, 0.0f, 0.0f));
 	particle2->mass = 1.989e30f/d;
-	particle3 = new Particle(2.0f, Vector3(140.0f, -100.0f, 0.0f));
-	//particle2->mass = 1000 * 1000;
+	particle3 = new Particle(50.0f, Vector3(0.0f, 2000.0f, 0.0f));
+	particle3->mass = 5.972e24f / d;;
 	particle->velocity = -200;
+	particle3->velocity = -300;
+	particle4 = new Particle(50.0f, Vector3(0.0f, 3000.0f, 0.0f));
+	particle4->mass = 5.972e24f / d;;
+	particle4->velocity = -120.0f;
+	
 
 
-
-	particles.push_back(particle);
+	//particles.push_back(particle);
 	particles.push_back(particle2);
-	//particles.push_back(particle3);
+	particles.push_back(particle3);
+	//particles.push_back(particle4);
 
 	//set camera 
 	camera = new Camera();
@@ -79,8 +84,9 @@ void Scene::update(float dt)
 	x = sinf(angle) * 2.0f;;
 	y = cosf(angle) * 2.0f;;
 
-	
-	if (time >= 0.2f)
+	time += dt;
+
+	if (time >= 0.5f)
 	{
 		//update vel
 		for (int i = 0; i < particles.size(); i++)
@@ -100,21 +106,10 @@ void Scene::update(float dt)
 				}
 			}
 			particles[i]->Update(dt);
+			count++;
 		}
 		time = 0.0f;
 	}
-	else
-	{
-
-		time += dt;
-
-	}
-
-
-
-
-
-	
 
 
 

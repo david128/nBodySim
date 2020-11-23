@@ -17,6 +17,7 @@ private:
 	Particle* particle;
 	Particle* particle2;
 	Particle* particle3;
+	Particle* particle4;
 	std::vector<Particle*> particles;
 	
 	
@@ -26,7 +27,7 @@ private:
 	float fov, nearPlane, farPlane;
 
 	float time = 11.0f;
-	
+	int count = 0;
 
 public:
 	Scene();

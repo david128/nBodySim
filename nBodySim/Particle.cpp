@@ -73,6 +73,7 @@ void Particle::DrawParticle()
 }
 
 void Particle::Update(float dt)
-{	
-	position = position + velocity;
+{
+	
+	position = position +velocity;
 }
