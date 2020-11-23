@@ -25,7 +25,7 @@ private:
 	int width, height;
 	float fov, nearPlane, farPlane;
 
-	float time = 0.0f;
+	float time = 11.0f;
 	
 
 public:

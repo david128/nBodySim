@@ -35,7 +35,7 @@ Scene::Scene()
 	particle2->mass = 1.989e30f/d;
 	particle3 = new Particle(2.0f, Vector3(140.0f, -100.0f, 0.0f));
 	//particle2->mass = 1000 * 1000;
-	particle->velocity = -550;
+	particle->velocity = -200;
 
 
 
@@ -107,11 +107,7 @@ void Scene::update(float dt)
 	{
 
 		time += dt;
-		for (int i = 0; i < particles.size(); i++)
-		{
-			particles[i]->Update(dt);
-		}
-		
+
 	}
 
 

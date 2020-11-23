@@ -73,7 +73,6 @@ void Particle::DrawParticle()
 }
 
 void Particle::Update(float dt)
-{
-	Vector3 dtV = Vector3((velocity.x * dt), (velocity.y * dt), (velocity.z * dt));
-	position = position +dtV;
+{	
+	position = position + velocity;
 }
