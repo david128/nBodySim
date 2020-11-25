@@ -21,16 +21,7 @@ public:
 	Vector3 getForward();
 
 	void update();
-	void moveForward(float);
-	void moveBackward(float);
-	void moveRight(float);
-	void moveLeft(float);
-	void restart();
-	void Mouse(float, int, int, int, int);
-	void rotateUp(float);
-	void rotateDown(float);
-	void rotateRight(float);
-	void rotateLeft(float);
+	
 private:
 	Vector3 position = { 0, 0, 6 };
 	Vector3 up = { 0, 1, 0 };

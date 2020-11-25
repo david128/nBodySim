@@ -2,7 +2,7 @@
 
 
 
-Particle::Particle(float s, Vector3 p)
+Particle::Particle(float s, Vector3 p) //alows initialisation of size and position
 {
 	size = s;
 	position = p;
@@ -19,9 +19,6 @@ Particle::~Particle()
 
 void Particle::DrawParticle()
 {
-
-
-
 
 	glPushMatrix();
 
@@ -74,6 +71,5 @@ void Particle::DrawParticle()
 
 void Particle::Update(float dt)
 {
-	
-	position = position +velocity;
+	position = position +velocity; //update position with velocity
 }

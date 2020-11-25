@@ -13,7 +13,6 @@
 class Scene
 {
 private:
-	Shape* shape;
 	Particle* particle;
 	Particle* particle2;
 	Particle* particle3;
@@ -29,6 +28,8 @@ private:
 	float time = 1.0f; // set so will be calculated at start
 	float d = 1000000.0f; //division
 	float g = 6.67408e-11f / d; //grav constant
+
+	float timeStep = 0.5f;
 
 public:
 	Scene();
