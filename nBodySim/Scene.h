@@ -26,8 +26,9 @@ private:
 	int width, height;
 	float fov, nearPlane, farPlane;
 
-	float time = 11.0f;
-	int count = 0;
+	float time = 1.0f; // set so will be calculated at start
+	float d = 1000000.0f; //division
+	float g = 6.67408e-11f / d; //grav constant
 
 public:
 	Scene();

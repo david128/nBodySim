@@ -2,12 +2,8 @@
 
 
 //temp
-float angle = 0.0f;
-float x;
-float y;
-float d = 1000000.0f;
-float g = 6.67408e-11f/d;
-float initSpeed = 1500.0f / (g / 3000.0f);
+
+
 
 
 Scene::Scene()
@@ -24,10 +20,9 @@ Scene::Scene()
 	glEnable(GL_TEXTURE_2D);							//	enable textures
 	glDepthFunc(GL_LEQUAL);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);	//blend function settings
-	// Other OpenGL / render setting should be applied here.
 
-	d = 1000000.0f;
-	g = 6.67408e-11f / d;
+
+
 	
 	particle = new Particle(50.0f, Vector3(0.0f, 2500.0f, 0.0f));
 	particle->mass = 5.972e24f/d;
@@ -79,10 +74,7 @@ void Scene::handleInput(float dt)
 
 void Scene::update(float dt)
 {
-	angle += 0.5f * dt; 
-	
-	x = sinf(angle) * 2.0f;;
-	y = cosf(angle) * 2.0f;;
+
 
 	time += dt;
 
@@ -106,7 +98,7 @@ void Scene::update(float dt)
 				}
 			}
 			particles[i]->Update(dt);
-			count++;
+			
 		}
 		time = 0.0f;
 	}
