@@ -43,10 +43,10 @@ Scene::Scene()
 	
 
 
-	//particles.push_back(particle);
+	particles.push_back(particle);
 	particles.push_back(particle2);
 	particles.push_back(particle3);
-	//particles.push_back(particle4);
+	particles.push_back(particle4);
 
 	//set camera 
 	camera = new Camera();
