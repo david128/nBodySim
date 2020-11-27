@@ -22,8 +22,7 @@ Scene::Scene()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);	//blend function settings
 
 
-
-	
+	//set up particles initial conditions
 	particle = new Particle(50.0f, Vector3(0.0f, 2500.0f, 0.0f));
 	particle->mass = 5.972e24f/d;
 	particle2 = new Particle(250.0f, Vector3(0.0f, 0.0f, 0.0f));
@@ -36,8 +35,7 @@ Scene::Scene()
 	particle4->mass = 5.972e24f / d;;
 	particle4->velocity = -120.0f;
 	
-
-
+	//store particles
 	particles.push_back(particle);
 	particles.push_back(particle2);
 	particles.push_back(particle3);
