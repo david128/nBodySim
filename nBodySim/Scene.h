@@ -6,7 +6,6 @@
 #include <gl/GLU.h>
 #include <stdio.h>
 #include "Camera.h"
-#include"Shape.h"
 #include "Particle.h"
 #include <vector>
 
