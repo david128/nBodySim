@@ -6,20 +6,25 @@
 #include <gl/GLU.h>
 #include <stdio.h>
 #include "Camera.h"
+#include "Input.h"
 #include "Particle.h"
+
 #include <vector>
 
 class Scene
 {
+	
 private:
 	Particle* particle;
 	Particle* particle2;
 	Particle* particle3;
 	Particle* particle4;
 	std::vector<Particle*> particles;
-	
+
 	
 	Camera* camera;
+	Input* input; 
+
 	// For Window and frustum calculation.
 	int width, height;
 	float fov, nearPlane, farPlane;
@@ -31,7 +36,7 @@ private:
 	float timeStep = 0.5f;
 
 public:
-	Scene();
+	Scene(Input* inp);
 	// render function
 	void render(float dt);
 	// Handle input function
@@ -40,5 +45,8 @@ public:
 	void update(float dt);
 	//resize
 	void resize(int w, int h);
+
+	void InitCamera();
+	void MoveCamera();
 };
 

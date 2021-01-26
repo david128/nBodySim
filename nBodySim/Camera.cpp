@@ -11,11 +11,35 @@ Camera::~Camera()
 {
 }
 
+void Camera::PanCamera(Vector3 pan)
+{
+	position = position + pan;
+}
+
+void Camera::ZoomCamera(float zoom)
+{
+	
+}
+
+void Camera::RotateX(float rotate)
+{
+	
+}
+
+void Camera::RotateY(float rotate)
+{
+
+}
+
+void Camera::RotateZ(float rotate)
+{
+
+}
+
 
 void Camera::setCameraPos(Vector3 i)
 {
 	position = i;
-
 }
 
 

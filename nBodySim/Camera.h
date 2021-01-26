@@ -8,7 +8,11 @@ public:
 	Camera();
 	~Camera();
 
-
+	void PanCamera(Vector3 pan);
+	void ZoomCamera(float zoom);
+	void RotateX(float rotate);
+	void RotateY(float rotate);
+	void RotateZ(float rotate);
 
 	void setCameraPos(Vector3);
 	void setCameraLook(Vector3);

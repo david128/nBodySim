@@ -6,8 +6,9 @@
 
 
 
-Scene::Scene()
+Scene::Scene(Input *inp)
 {
+	input = inp;
 	
 	//OpenGL settings
 	glShadeModel(GL_SMOOTH);							// Enable Smooth Shading
@@ -41,12 +42,17 @@ Scene::Scene()
 	particles.push_back(particle3);
 	particles.push_back(particle4);
 
+	InitCamera();
+	
+}
+
+void Scene::InitCamera()
+{
 	//set camera 
 	camera = new Camera();
 	camera->setCameraLook(Vector3(0.0f, 0.0f, 0.0f));
-	camera->setCameraPos(Vector3(0.0f, 0.0f,-9850.0f));
+	camera->setCameraPos(Vector3(0.0f, 0.0f, -9850.0f));
 	camera->setCameraUp(Vector3(0, 1, 0));
-	
 }
 
 void Scene::render(float dt)
@@ -68,6 +74,12 @@ void Scene::render(float dt)
 
 void Scene::handleInput(float dt)
 {
+	if (input->isKeyDown('f'))
+	{
+		camera->ZoomCamera(100.0f);
+	}
+	int i = 1;
+	i++;
 }
 
 void Scene::update(float dt)
@@ -106,7 +118,7 @@ void Scene::update(float dt)
 		time = 0.0f;//reset time
 	}
 
-
+	
 
 }
 
