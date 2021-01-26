@@ -53,6 +53,8 @@ void Scene::InitCamera()
 	camera->setCameraLook(Vector3(0.0f, 0.0f, 0.0f));
 	camera->setCameraPos(Vector3(0.0f, 0.0f, -9850.0f));
 	camera->setCameraUp(Vector3(0, 1, 0));
+	camera->SetDistanceToLook(9850.0);
+
 }
 
 void Scene::render(float dt)
@@ -74,12 +76,27 @@ void Scene::render(float dt)
 
 void Scene::handleInput(float dt)
 {
-	if (input->isKeyDown('f'))
+	if (input->isKeyDown('d'))
 	{
-		camera->ZoomCamera(100.0f);
+		camera->PanCamera(-0.2f *dt);
 	}
-	int i = 1;
-	i++;
+
+	if (input->isKeyDown('a'))
+	{
+		camera->PanCamera(0.2f * dt);
+	}
+
+
+	if (input->isKeyDown('i'))
+	{
+		camera->ZoomCamera(-100.0f * dt);
+	}
+
+
+	if (input->isKeyDown('o'))
+	{
+		camera->ZoomCamera(+100.0f * dt);
+	}
 }
 
 void Scene::update(float dt)
@@ -87,6 +104,9 @@ void Scene::update(float dt)
 
 	//time = time + frame time
 	time += dt;
+
+	//update camera
+	camera->update();
 
 	
 	if (time >= timeStep)
@@ -119,7 +139,7 @@ void Scene::update(float dt)
 	}
 
 	
-
+	
 }
 
 void Scene::resize(int w, int h)
