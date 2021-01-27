@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "Input.h"
 #include "Particle.h"
+#include "ParticleManager.h"
 
 #include <vector>
 
@@ -15,12 +16,13 @@ class Scene
 {
 	
 private:
-	Particle* particle;
+	/*Particle* particle;
 	Particle* particle2;
 	Particle* particle3;
 	Particle* particle4;
-	std::vector<Particle*> particles;
-
+	std::vector<Particle*> particles;*/
+	
+	ParticleManager* particleManager;
 	
 	Camera* camera;
 	Input* input; 
@@ -30,8 +32,8 @@ private:
 	float fov, nearPlane, farPlane;
 
 	float time = 1.0f; // set so will be calculated at start
-	float d = 1000000.0f; //division
-	float g = 6.67408e-11f / d; //grav constant
+	
+	float g = 6.67408e-11f; //grav constant
 
 	float timeStep = 0.5f;
 

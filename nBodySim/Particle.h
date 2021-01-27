@@ -4,7 +4,7 @@
 class Particle
 {
 public:
-	Particle(float s, Vector3 p); 
+	Particle(float s, Vector3 p,float m); 
 	Particle();
 	~Particle();
 

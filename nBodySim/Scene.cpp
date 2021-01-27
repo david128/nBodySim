@@ -24,24 +24,29 @@ Scene::Scene(Input *inp)
 
 
 	//set up particles initial conditions
-	particle = new Particle(50.0f, Vector3(0.0f, 2500.0f, 0.0f));
-	particle->mass = 5.972e24f/d;
-	particle2 = new Particle(250.0f, Vector3(0.0f, 0.0f, 0.0f));
-	particle2->mass = 1.989e30f/d;
-	particle3 = new Particle(50.0f, Vector3(0.0f, 2000.0f, 0.0f));
-	particle3->mass = 5.972e24f / d;;
-	particle->velocity = -200;
-	particle3->velocity = -300;
-	particle4 = new Particle(50.0f, Vector3(0.0f, 3000.0f, 0.0f));
-	particle4->mass = 5.972e24f / d;;
-	particle4->velocity = -120.0f;
-	
+	//particle = new Particle(50.0f, Vector3(0.0f, 2500.0f, 0.0f));
+	//particle->mass = 5.972e24f/d;
+	//particle2 = new Particle(250.0f, Vector3(0.0f, 0.0f, 0.0f));
+	//particle2->mass = 1.989e30f/d;
+	//particle3 = new Particle(50.0f, Vector3(0.0f, 2000.0f, 0.0f));
+	//particle3->mass = 5.972e24f / d;;
+	//particle->velocity = -200;
+	//particle3->velocity = -300;
+	//particle4 = new Particle(50.0f, Vector3(0.0f, 3000.0f, 0.0f));
+	//particle4->mass = 5.972e24f / d;;
+	//particle4->velocity = -120.0f;
+	//
 	//store particles
-	particles.push_back(particle);
-	particles.push_back(particle2);
-	particles.push_back(particle3);
-	particles.push_back(particle4);
+	//particles.push_back(particle);
+	//particles.push_back(particle2);
+	//particles.push_back(particle3);
+	//particles.push_back(particle4);
 
+	particleManager = new ParticleManager(Vector3(7000.0f, 7000.0f, 7000.0f));
+	particleManager->InitSystem(100);
+	Particle* largeP = new Particle(500, Vector3(0.0f,0.0f,0.0f), 5.24e8f);
+	largeP->velocity = Vector3(0.5f, 0.04f, 0.0f);
+	particleManager->AddParticle(largeP);
 	InitCamera();
 	
 }
@@ -64,10 +69,10 @@ void Scene::render(float dt)
 	glLoadIdentity();
 
 	gluLookAt(camera->getCameraPos().getX(), camera->getCameraPos().getY(), camera->getCameraPos().getZ(), camera->getCameraLook().getX(), camera->getCameraLook().getY(), camera->getCameraLook().getZ(), camera->getCameraUp().getX(), camera->getCameraUp().getY(), camera->getCameraUp().getZ());
-
-	for (int i = 0; i < particles.size(); i++)
+	std::vector<Particle*>* particles = particleManager->GetParticles();
+	for (int i = 0; i < particles->size(); i++)
 	{
-		particles[i]->DrawParticle();
+		particles->at(i)->DrawParticle();
 	}
 
 	glutSwapBuffers();
@@ -108,31 +113,32 @@ void Scene::update(float dt)
 	//update camera
 	camera->update();
 
-	
+	std::vector<Particle*>* particles = particleManager->GetParticles();
+
 	if (time >= timeStep)
 	{
 		//update vel every time step
 		//loop all particles
-		for (int i = 0; i < particles.size(); i++)
+		for (int i = 0; i < particles->size(); i++)
 		{
 			//loop all particles 
-			for (int j = 0; j < particles.size(); j++)
+			for (int j = 0; j < particles->size(); j++)
 			{
 				//if j and i are not same particle then calc j gravitational effect on i
 				if (j != i)
 				{
 					//diff in positions
-					Vector3 diff = particles[i]->position - particles[j]->position;
+					Vector3 diff = particles->at(i)->position - particles->at(j)->position;
 					float dist = diff.length(); //get distance
 					
-					float mult = (g * particles[j]->mass) / (dist * dist * dist); //multiplier  (g * mass )/ (distance ^3)
+					float mult = (g * particles->at(j)->mass) / (dist * dist * dist); //multiplier  (g * mass )/ (distance ^3)
 
 					Vector3 multDiff = Vector3(mult * diff.getX(), mult * diff.getY(), mult * diff.getZ()); //multiply  vector by multiplier to get force
-					particles[i]->velocity = particles[i]->velocity - multDiff; //new V = old v + acceleration due to gravity
+					particles->at(i)->velocity = particles->at(i)->velocity - multDiff; //new V = old v + acceleration due to gravity
 
 				}
 			}
-			particles[i]->Update(dt);//update particles with new forces
+			particles->at(i)->Update(dt);//update particles with new forces
 			
 		}
 		time = 0.0f;//reset time
@@ -154,7 +160,7 @@ void Scene::resize(int w, int h)
 	float ratio = (float)w / (float)h;
 	fov = 45.0f;
 	nearPlane = 0.1f;
-	farPlane = 100000.0f;
+	farPlane = 500000.0f;
 
 	// Use the Projection Matrix
 	glMatrixMode(GL_PROJECTION);

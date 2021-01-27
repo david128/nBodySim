@@ -2,11 +2,11 @@
 
 
 
-Particle::Particle(float s, Vector3 p) //alows initialisation of size and position
+Particle::Particle(float scale, Vector3 pos, float m) //alows initialisation of size and position
 {
-	size = s;
-	position = p;
-	mass = size;
+	size = scale;
+	position = pos;
+	mass = m;
 }
 
 Particle::Particle()
