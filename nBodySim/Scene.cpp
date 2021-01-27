@@ -76,24 +76,24 @@ void Scene::render(float dt)
 
 void Scene::handleInput(float dt)
 {
-	if (input->isKeyDown('d'))
+	if (input->isKeyDown('d') || input->isKeyDown('D'))
 	{
 		camera->PanCamera(-0.2f *dt);
 	}
 
-	if (input->isKeyDown('a'))
+	if (input->isKeyDown('a') || input->isKeyDown('A'))
 	{
 		camera->PanCamera(0.2f * dt);
 	}
 
 
-	if (input->isKeyDown('i'))
+	if (input->isKeyDown('i')|| input->isKeyDown('I'))
 	{
 		camera->ZoomCamera(-100.0f * dt);
 	}
 
 
-	if (input->isKeyDown('o'))
+	if (input->isKeyDown('o') || input->isKeyDown('O'))
 	{
 		camera->ZoomCamera(+100.0f * dt);
 	}
