@@ -2,9 +2,13 @@
 #include <time.h> 
 
 
-ParticleManager::ParticleManager(Vector3 extents)
+ParticleManager::ParticleManager(Vector3 extents, float g)
 {
-	systemExtents = extents;
+	posSystemExtents = extents;
+	negSystemExtents = extents;
+	negSystemExtents.scale(-1.0f);
+	direct = new DirectSolver(g);
+
 }
 
 Particle* ParticleManager::CreateRandomParticle()
@@ -42,8 +46,11 @@ std::vector<Particle*>* ParticleManager::GetParticles()
 	return &particles;
 }
 
-void ParticleManager::Update()
+void ParticleManager::Update(float dt, float timeStep)
 {
+
+	if (direct->Update(dt, timeStep))
+		direct->Solve(dt, &particles);
 }
 
 
@@ -60,9 +67,9 @@ Vector3 ParticleManager::FindRandomPos()
 {
 
 	///return pos in extents of system
-	Vector3 pos = Vector3(float(rand() % (int)(systemExtents.x * 2.0f) + (int)-systemExtents.x),
-		float(rand() % (int)(systemExtents.y * 2.0f) + (int)-systemExtents.y),
-		float(rand() % (int)(systemExtents.z * 2.0f) + (int)-systemExtents.z));
+	Vector3 pos = Vector3(float(rand() % (int)(posSystemExtents.x * 2.0f) + (int)negSystemExtents.x),
+		float(rand() % (int)(posSystemExtents.y * 2.0f) + (int)negSystemExtents.y),
+		float(rand() % (int)(posSystemExtents.z * 2.0f) + (int)negSystemExtents.z));
 
 	return pos;
 }

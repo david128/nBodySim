@@ -2,11 +2,12 @@
 #include "Particle.h"
 #include <vector>
 #include "Vector3.h"
+#include "DirectSolver.h"
 
 class ParticleManager
 {
 public:
-	ParticleManager(Vector3 extents);
+	ParticleManager(Vector3 extents, float g);
 
 	Particle* CreateRandomParticle();
 	void AddParticle(Particle* part);
@@ -16,11 +17,15 @@ public:
 	Particle* GetParticle(int id);
 	std::vector<Particle*>* GetParticles();
 	
-	void Update();
+
+	DirectSolver* direct;
+
+	void Update(float dt, float timeStep);
 
 private:
 
-	Vector3 systemExtents;
+	Vector3 posSystemExtents;
+	Vector3 negSystemExtents;
 
 	//particles
 	std::vector<Particle*> particles;

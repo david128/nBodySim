@@ -28,8 +28,7 @@ private:
 	Camera* camera;
 	Input* input; 
 
-	DirectSolver* direct;
-
+	
 	// For Window and frustum calculation.
 	int width, height;
 	float fov, nearPlane, farPlane;

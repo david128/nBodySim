@@ -1,26 +1,29 @@
 #include "DirectSolver.h"
 
-DirectSolver::DirectSolver(ParticleManager* pm, float gravConst)
+
+DirectSolver::DirectSolver( float gravConst)
 {
-	particleManager = pm;
+
 	time = 0.0f;
 	g = gravConst;
 }
 
-void DirectSolver::Update(float dt, float timeStep)
+bool DirectSolver::Update(float dt, float timeStep)
 {
 	time += dt;
 
 	if (time >= timeStep)
 	{
-		Solve(dt);
 		time = 0.0f;//reset time
+		return true; //return true so we now solve
+		
 	}
+	return false;
 }
 
-void DirectSolver::Solve(float dt)
+void DirectSolver::Solve(float dt, std::vector<Particle*>* particles)
 {
-	std::vector<Particle*>* particles = particleManager->GetParticles();
+	
 	//update vel every time step
 	//loop all particles
 	for (int i = 0; i < particles->size(); i++)
