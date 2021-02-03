@@ -24,6 +24,7 @@ bool DirectSolver::Update(float dt, float timeStep)
 void DirectSolver::Solve(float dt, std::vector<Particle*>* particles)
 {
 	
+	
 	//update vel every time step
 	//loop all particles
 	for (int i = 0; i < particles->size(); i++)

@@ -3,6 +3,7 @@
 #include <vector>
 #include "Vector3.h"
 #include "DirectSolver.h"
+#include "BHTree.h"
 
 class ParticleManager
 {
@@ -19,6 +20,7 @@ public:
 	
 
 	DirectSolver* direct;
+	BHTree* barnesHut;
 
 	void Update(float dt, float timeStep);
 
