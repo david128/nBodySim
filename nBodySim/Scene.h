@@ -9,6 +9,7 @@
 #include "Input.h"
 #include "Particle.h"
 #include "ParticleManager.h"
+#include "DirectSolver.h"
 
 #include <vector>
 
@@ -26,6 +27,8 @@ private:
 	
 	Camera* camera;
 	Input* input; 
+
+	DirectSolver* direct;
 
 	// For Window and frustum calculation.
 	int width, height;

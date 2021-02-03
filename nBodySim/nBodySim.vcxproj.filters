@@ -13,6 +13,18 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\BH">
+      <UniqueIdentifier>{9c67b041-2c88-46cd-8e99-9c42778ad5cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\BH">
+      <UniqueIdentifier>{88109d98-ec73-45bc-8961-970c262f22b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Direct">
+      <UniqueIdentifier>{a0a6bf46-8544-4164-86fa-213fc537e9db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Direct">
+      <UniqueIdentifier>{1448315e-f4a1-4021-bfe5-56814865f6d9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -36,6 +48,12 @@
     <ClCompile Include="ParticleManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BHTree.cpp">
+      <Filter>Source Files\BH</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectSolver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene.h">
@@ -54,6 +72,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ParticleManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BHTree.h">
+      <Filter>Header Files\BH</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectSolver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

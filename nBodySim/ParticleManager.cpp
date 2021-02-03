@@ -42,6 +42,10 @@ std::vector<Particle*>* ParticleManager::GetParticles()
 	return &particles;
 }
 
+void ParticleManager::Update()
+{
+}
+
 
 
 float ParticleManager::FindRandomSize(int min, int max)

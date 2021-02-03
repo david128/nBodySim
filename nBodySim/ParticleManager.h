@@ -15,6 +15,8 @@ public:
 
 	Particle* GetParticle(int id);
 	std::vector<Particle*>* GetParticles();
+	
+	void Update();
 
 private:
 
