@@ -42,8 +42,8 @@ Scene::Scene(Input *inp)
 	//particles.push_back(particle3);
 	//particles.push_back(particle4);
 
-	particleManager = new ParticleManager(Vector3(7000.0f, 7000.0f, 7000.0f), g);
-	particleManager->InitSystem(100);
+	particleManager = new ParticleManager(Vector3(100.0f, 100.0f, 100.0f), g);
+	particleManager->InitSystem(10);
 	//Particle* largeP = new Particle(500, Vector3(0.0f,0.0f,0.0f), 5.24e8f);
 	//largeP->velocity = Vector3(0.5f, 0.04f, 0.0f);
 	//particleManager->AddParticle(largeP);

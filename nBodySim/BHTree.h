@@ -4,6 +4,8 @@
 #include "Particle.h"
 
 struct Node {
+
+
     int particleCount;
     Node* children[8];
     Vector3 averagePos;

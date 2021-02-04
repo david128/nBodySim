@@ -8,7 +8,7 @@ ParticleManager::ParticleManager(Vector3 extents, float g)
 	negSystemExtents = extents;
 	negSystemExtents.scale(-1.0f);
 	direct = new DirectSolver(g);
-	barnesHut = new BHTree(extents.x);
+	barnesHut = new BHTree(extents.x*100);
 
 }
 
