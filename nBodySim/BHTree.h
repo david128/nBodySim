@@ -14,7 +14,7 @@ struct Node {
     Vector3 position;
     Vector3 localPosition;
     Particle* particle;
-    std::vector<Particle*>* particles;
+    std::vector<Particle*> particles;
 
     void FindLocalPosition(int i);
 };
@@ -30,7 +30,7 @@ public:
     void SplitNode(Node* currentNode);
 private:
 
-    Node* root;
+    Node root;
     Vector3 extents;
 };
 
