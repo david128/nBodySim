@@ -8,11 +8,12 @@ public:
 	Particle();
 	~Particle();
 
+	Vector3 position;
 	float size;
 	float mass;
-	Vector3 acceleration;
+	//Vector3 acceleration;
 	Vector3 velocity;
-	Vector3 position;
+
 	
 	void DrawParticle();
 	void Update(float dt);

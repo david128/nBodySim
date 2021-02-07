@@ -7,7 +7,8 @@ struct Node {
 
 
     int particleCount;
-    Node* children[8];
+    //Node* children[8];
+    std::vector<Node*> children;
     Vector3 averagePos;
     float averageMass;
     float sideLegnth;
@@ -16,7 +17,7 @@ struct Node {
     Particle* particle;
     std::vector<Particle*> particles;
 
-    void FindLocalPosition(int i);
+    void FindLocalPosition(int i, Vector3 parentCentre);
 };
 
 class BHTree
@@ -28,6 +29,8 @@ public:
 
     void ConstructTree(std::vector<Particle*>* particles);
     void SplitNode(Node* currentNode);
+    void DeleteNode(Node* currentNode);
+    void DeleteTree();
 private:
 
     Node root;
