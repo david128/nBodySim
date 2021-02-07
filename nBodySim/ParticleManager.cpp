@@ -40,7 +40,7 @@ void ParticleManager::InitSystem(int numParticles)
 		//create and store particle
 		particles.push_back(CreateRandomParticle());
 	}
-	barnesHut->ConstructTree(&particles);
+
 }	
 
 std::vector<Particle*>* ParticleManager::GetParticles()
@@ -54,12 +54,12 @@ void ParticleManager::Update(float dt, float timeStep)
 	if (direct->Update(dt, timeStep))
 	{
 		direct->Solve(dt, &particles);
-		//barnesHut->ConstructTree(&particles);
-
+		barnesHut->ConstructTree(&particles);
+		barnesHut->DeleteTree();
 	}
 		
 
-	barnesHut->DeleteTree();
+	
 }
 
 

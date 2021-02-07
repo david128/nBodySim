@@ -36,10 +36,7 @@ void BHTree::SplitNode(Node* currentNode)
 	
 	float halfSide = currentNode->sideLegnth * 0.5;
 	Vector3 parentCentre = Vector3(currentNode->position.x - halfSide, currentNode->position.y - halfSide, currentNode->position.z - halfSide); //pos is centre +half side in pos; centre = pos -halfside
-	if (parentCentre.x == 0.0f || parentCentre.y == 0.0f || parentCentre.z == 0.0f)
-	{
-		parentCentre += Vector3(0.01f, 0.01f, 0.01f); //alter to avoid dividing by 0
-	}
+
 	//create 8 nodes
 	for (int i = 0; i < 8; i++)
 	{
@@ -49,7 +46,11 @@ void BHTree::SplitNode(Node* currentNode)
 		
 	}
 	
-	
+	if (parentCentre.x == 0.0f || parentCentre.y == 0.0f || parentCentre.z == 0.0f)
+	{
+		parentCentre += Vector3(0.01f, 0.01f, 0.01f); //alter to avoid dividing by 0
+	}
+
 	//assign all particles to appropriate node
 	for (int i = 0; i < currentNode->particleCount; i++)
 	{
@@ -113,12 +114,17 @@ void BHTree::DeleteNode(Node* currentNode)
 
 	for (int i = 0; i < 8; i++) //loop through children of cur node
 	{
-		if (currentNode->children[i]->particleCount > 1) //if have more than 1 children then recursively delete
+		if (currentNode->children[i] != NULL) //nothing to delete
 		{
-			DeleteNode(currentNode->children[i]);
+			if (currentNode->children[i]->particleCount > 1)
+			{
+				DeleteNode(currentNode->children[i]); //recursively delete node's children
+			}
+			
+			delete currentNode->children[i]; //delete this child
+			currentNode->children[i] = NULL; //set pntr to NULL
 		}
-		delete currentNode->children[i]; //delete this child
-		currentNode->children[i] = NULL; //delete this child
+
 		
 	}
 	currentNode->children.clear();
@@ -132,36 +138,36 @@ void Node::FindLocalPosition(int i, Vector3 parentCentre)
 	{
 	case 0:
 		localPosition = Vector3(1, 1, 1);
-		position = parentCentre + (sideLegnth, sideLegnth, sideLegnth);
+		position = parentCentre + Vector3(sideLegnth, sideLegnth, sideLegnth);
 
 		break;
 	case 1:
 		localPosition = Vector3(1, -1, -1);
-		position = parentCentre + (sideLegnth, 0.0f, 0.0f);
+		position = parentCentre + Vector3(sideLegnth, 0.0f, 0.0f);
 		break;
 	case 2:
 		localPosition = Vector3(1, -1, 1);
-		position = parentCentre + (sideLegnth, 0.0f, sideLegnth);
+		position = parentCentre + Vector3(sideLegnth, 0.0f, sideLegnth);
 		break;
 	case 3:
 		localPosition = Vector3(1, 1, -1);
-		position = parentCentre + (sideLegnth, sideLegnth, 0.0f);
+		position = parentCentre + Vector3(sideLegnth, sideLegnth, 0.0f);
 		break;
 	case 4:
 		localPosition = Vector3(-1, 1, 1);
-		position = parentCentre + (0.0f, sideLegnth, sideLegnth);
+		position = parentCentre + Vector3(0.0f, sideLegnth, sideLegnth);
 		break;
 	case 5:
 		localPosition = Vector3(-1, 1,- 1);
-		position = parentCentre + (0.0f, sideLegnth, 0.0f);
+		position = parentCentre + Vector3(0.0f, sideLegnth, 0.0f);
 		break;
 	case 6:
 		localPosition = Vector3(-1, -1, 1);
-		position = parentCentre + (0.0f, 0.0f, sideLegnth);
+		position = parentCentre + Vector3(0.0f, 0.0f, sideLegnth);
 		break;
 	case 7:
 		localPosition = Vector3(-1, -1,- 1);
-		position = parentCentre + (0.0f, 0.0f, 0.0f);
+		position = parentCentre + Vector3(0.0f, 0.0f, 0.0f);
 		break;
 	}
 }
