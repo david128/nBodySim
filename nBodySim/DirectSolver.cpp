@@ -46,7 +46,7 @@ void DirectSolver::Solve(float dt, std::vector<Particle*>* particles)
 
 			}
 		}
-		particles->at(i)->Update(dt);//update particles with new forces
+		particles->at(i)->Update();//update particles with new forces
 
 	}
 

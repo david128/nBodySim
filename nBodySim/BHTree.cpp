@@ -1,15 +1,30 @@
 #include "BHTree.h"
 
-BHTree::BHTree(float halfSide)
+BHTree::BHTree(float halfSide , float gravConst)
 {
 	
 	root.position = Vector3(halfSide, halfSide, halfSide);
 	root.sideLegnth = halfSide * 2.0f;;
-	
+
+	time = 0.0f;
+	g = gravConst;
 }
 
 BHTree::~BHTree()
 {
+}
+
+bool BHTree::Update(float dt, float timeStep)
+{
+	time += dt;
+
+	if (time >= timeStep)
+	{
+		time = 0.0f;//reset time
+		return true; //return true so we now solve
+
+	}
+	return false;
 }
 
 void BHTree::ConstructTree (std::vector<Particle*>* particles)
@@ -30,6 +45,66 @@ void BHTree::DeleteTree()
 {
 	DeleteNode(&root);
 }
+
+void BHTree::CalculateForces(float theta, std::vector<Particle*>* particles)
+{
+
+	for (int i = 0; i < particles->size(); i++) //for all particles find forces applied
+	{
+		TraversNode(particles->at(i), theta,&root);//start at root
+	}
+
+}
+
+void BHTree::TraversNode(Particle* particle, float theta, Node* currentNode)
+{
+	for (auto node : currentNode->children)
+	{
+		if (node != NULL)//if empty node then we can skip as not particles to calculate force of
+		{
+			if (node->particleCount == 1) //external node we can use nodes avgs because these are values from the one single particle
+			{
+				if (node->particle != particle) //do not calculate force of particle on self
+				{
+					CalculateForce(particle, node->averagePos, node->combinedMass);
+				}
+				
+			}
+			else
+			{
+				Vector3 diff = particle->position - node->averagePos;
+				float dist = diff.length();//get distance between points
+				if ((node->sideLegnth / dist) < theta)
+				{
+
+					CalculateForce(particle, node->averagePos, node->combinedMass); //suitably far so can use avg mass and CoM
+				}
+				else
+				{
+					//too close, so need to traverse node further
+					TraversNode(particle, theta, node);
+				}
+
+			}
+		}
+	}
+}
+
+void BHTree::CalculateForce(Particle* particle, Vector3 acm, float cm ) //using euler method
+{
+	Vector3 diff = particle->position - acm;
+	float dist = diff.length(); //get distance
+
+	float mult = (g * cm) / (dist * dist * dist); //multiplier  (g * mass )/ (distance ^3)
+
+	Vector3 multDiff = Vector3(mult * diff.getX(), mult * diff.getY(), mult * diff.getZ()); //multiply  vector by multiplier to get force
+	particle->velocity = particle->velocity - multDiff; //new V = old v + acceleration due to gravity
+	particle->Update();
+	
+}
+
+
+
 
 void BHTree::SplitNode(Node* currentNode)
 {
@@ -86,7 +161,7 @@ void BHTree::SplitNode(Node* currentNode)
 		else if (currentNode->children[i]->particleCount == 1)
 		{
 			currentNode->children[i]->particle = currentNode->children[i]->particles[0];
-			currentNode->children[i]->averageMass = currentNode->children[i]->particle->mass;
+			currentNode->children[i]->combinedMass = currentNode->children[i]->particle->mass;
 			currentNode->children[i]->averagePos = currentNode->children[i]->particle->position;
 		}
 		else
@@ -94,11 +169,10 @@ void BHTree::SplitNode(Node* currentNode)
 			//sum masses and positions
 			for (int j = 0; j < currentNode->children[i]->particleCount; j++)
 			{
-				currentNode->children[i]->averageMass += currentNode->children[i]->particles[j]->mass;
+				currentNode->children[i]->combinedMass += currentNode->children[i]->particles[j]->mass;
 				currentNode->children[i]->averagePos += currentNode->children[i]->particles[j]->position;
 			}
 			//find average
-			currentNode->children[i]->averageMass = currentNode->children[i]->averageMass / currentNode->children[i]->particleCount;
 			currentNode->children[i]->averagePos.scale(1.0f/ (float)currentNode->children[i]->particleCount);
 
 
@@ -125,7 +199,6 @@ void BHTree::DeleteNode(Node* currentNode)
 			currentNode->children[i] = NULL; //set pntr to NULL
 		}
 
-		
 	}
 	currentNode->children.clear();
 	

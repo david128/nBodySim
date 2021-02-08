@@ -16,6 +16,6 @@ public:
 
 	
 	void DrawParticle();
-	void Update(float dt);
+	void Update();
 };
 

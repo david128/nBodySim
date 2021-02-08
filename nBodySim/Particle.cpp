@@ -69,7 +69,7 @@ void Particle::DrawParticle()
 	glPopMatrix();
 }
 
-void Particle::Update(float dt)
+void Particle::Update()
 {
 	position = position +velocity; //update position with velocity
 }

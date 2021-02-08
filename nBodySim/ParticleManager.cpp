@@ -8,7 +8,7 @@ ParticleManager::ParticleManager(Vector3 extents, float g)
 	negSystemExtents = extents;
 	negSystemExtents.scale(-1.0f);
 	direct = new DirectSolver(g);
-	barnesHut = new BHTree(extents.x*100);
+	barnesHut = new BHTree(extents.x*10.0f, g);
 
 }
 
@@ -51,15 +51,21 @@ std::vector<Particle*>* ParticleManager::GetParticles()
 void ParticleManager::Update(float dt, float timeStep)
 {
 
-	if (direct->Update(dt, timeStep))
-	{
-		direct->Solve(dt, &particles);
-		barnesHut->ConstructTree(&particles);
-		barnesHut->DeleteTree();
-	}
-		
+	//if (direct->Update(dt, timeStep))
+	//{
+	//	direct->Solve(dt, &particles);
 
+	//}
+		
+	if (barnesHut->Update(dt, timeStep))
+	{
+		barnesHut->ConstructTree(&particles);
+		barnesHut->CalculateForces(0.5f, &particles);
+		barnesHut->DeleteTree();
+
+	}
 	
+
 }
 
 
