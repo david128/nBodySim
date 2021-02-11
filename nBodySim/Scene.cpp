@@ -79,6 +79,7 @@ void Scene::render(float dt)
 		particles->at(i)->DrawParticle();
 	}
 
+	//particleManager->barnesHut->DrawDebug();
 	glutSwapBuffers();
 
 }

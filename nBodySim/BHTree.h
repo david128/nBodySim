@@ -16,7 +16,7 @@ struct Node {
     Vector3 localPosition;
     Particle* particle;
     std::vector<Particle*> particles;
-
+   
     void FindLocalPosition(int i, Vector3 parentCentre);
 };
 
@@ -36,12 +36,16 @@ public:
     void CalculateForces(float theta, std::vector<Particle*>* particles);
     void TraversNode(Particle* particle, float theta, Node* node);
     void CalculateForce(Particle* particle, Vector3 acm, float am);
+    void DrawDebug();
+    void DrawLines(Node* node);
+
 private:
 
     Node root;
     Vector3 extents;
     float g;
     float time;
+    float maxPos;
 };
 
 

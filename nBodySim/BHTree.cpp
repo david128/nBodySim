@@ -4,6 +4,7 @@ BHTree::BHTree(float halfSide , float gravConst)
 {
 	
 	root.position = Vector3(halfSide, halfSide, halfSide);
+	maxPos = halfSide;
 	root.sideLegnth = halfSide * 2.0f;;
 
 	time = 0.0f;
@@ -43,7 +44,11 @@ void BHTree::ConstructTree (std::vector<Particle*>* particles)
 
 void BHTree::DeleteTree()
 {
-	DeleteNode(&root);
+	if (root.children.size() != 0)
+	{
+		DeleteNode(&root);
+	}
+	
 }
 
 void BHTree::CalculateForces(float theta, std::vector<Particle*>* particles)
@@ -103,6 +108,29 @@ void BHTree::CalculateForce(Particle* particle, Vector3 acm, float cm ) //using 
 	
 }
 
+void BHTree::DrawDebug()
+{
+
+	DrawLines(&root);
+
+}
+
+void BHTree::DrawLines(Node* node)
+{
+
+
+	glBegin(GL_LINES);
+
+	glVertex3f(-10000, 10000, 0);
+	glVertex3f(10000, 10000, 0);
+	glVertex3f(10000, -10000, 0);
+	glVertex3f(-10000, 10000, 0);
+
+
+	glEnd();
+
+}
+
 
 
 
@@ -126,59 +154,71 @@ void BHTree::SplitNode(Node* currentNode)
 		parentCentre += Vector3(0.01f, 0.01f, 0.01f); //alter to avoid dividing by 0
 	}
 
+	
 	//assign all particles to appropriate node
 	for (int i = 0; i < currentNode->particleCount; i++)
 	{
+		bool inside = true; // if particle is not inside extents of root then do not recursively split it.
+		if (abs(currentNode->particles[i]->position.x) > root.sideLegnth*0.5f || abs(currentNode->particles[i]->position.y) > root.sideLegnth * 0.5f || abs(currentNode->particles[i]->position.z) > root.sideLegnth * 0.5f)
+		{
+			inside = false; //if not inside extents, set inside to false
+		}
 		//pos -centre point to find if coordinates are - or + directions from centre
 		Vector3 dir = currentNode->particles[i]->position - parentCentre;
 
-
-		dir = Vector3((dir.x / abs(dir.x)), (dir.y / abs(dir.y)), (dir.z / abs(dir.z)));
-		bool placed = false;
-		int j = 0;
-		while (!placed)
+		if (inside) //only place particle if inside extents(otherwise will not correctly place, and will inifinitely run until out of memory crash.
 		{
-			if (dir.equals(currentNode->children[j]->localPosition))
+			
+			dir = Vector3((dir.x / abs(dir.x)), (dir.y / abs(dir.y)), (dir.z / abs(dir.z)));
+			bool placed = false;
+			int j = 0;
+			while (!placed)
 			{
-				currentNode->children[j]->particles.push_back(currentNode->particles[i]);
-				currentNode->children[j]->particleCount++;
-				placed = true;
+				if (dir.equals(currentNode->children[j]->localPosition))
+				{
+					currentNode->children[j]->particles.push_back(currentNode->particles[i]);
+					currentNode->children[j]->particleCount++;
+					placed = true;
+				}
+				j++;
 			}
-			j++;
 		}
+
+		
 
 	}
 
 	//find avg mass and position for all nodes and recursively split if required
 	for (int i = 0; i < 8; i++)
 	{
-		if (currentNode->children[i]->particleCount == 0)
-		{
-			delete currentNode->children[i]; //delete, do not need to store
-			currentNode->children[i] = NULL; //node is empty
-			
-		}
-		else if (currentNode->children[i]->particleCount == 1)
-		{
-			currentNode->children[i]->particle = currentNode->children[i]->particles[0];
-			currentNode->children[i]->combinedMass = currentNode->children[i]->particle->mass;
-			currentNode->children[i]->averagePos = currentNode->children[i]->particle->position;
-		}
-		else
-		{
-			//sum masses and positions
-			for (int j = 0; j < currentNode->children[i]->particleCount; j++)
+
+			if (currentNode->children[i]->particleCount == 0)
 			{
-				currentNode->children[i]->combinedMass += currentNode->children[i]->particles[j]->mass;
-				currentNode->children[i]->averagePos += currentNode->children[i]->particles[j]->position;
+				delete currentNode->children[i]; //delete, do not need to store
+				currentNode->children[i] = NULL; //node is empty
+
 			}
-			//find average
-			currentNode->children[i]->averagePos.scale(1.0f/ (float)currentNode->children[i]->particleCount);
+			else if (currentNode->children[i]->particleCount == 1)
+			{
+				currentNode->children[i]->particle = currentNode->children[i]->particles[0];
+				currentNode->children[i]->combinedMass = currentNode->children[i]->particle->mass;
+				currentNode->children[i]->averagePos = currentNode->children[i]->particle->position;
+			}
+			else
+			{
+				//sum masses and positions
+				for (int j = 0; j < currentNode->children[i]->particleCount; j++)
+				{
+					currentNode->children[i]->combinedMass += currentNode->children[i]->particles[j]->mass;
+					currentNode->children[i]->averagePos += currentNode->children[i]->particles[j]->position;
+				}
+				//find average
+				currentNode->children[i]->averagePos.scale(1.0f / (float)currentNode->children[i]->particleCount);
 
 
-			SplitNode(currentNode->children[i]); //further split node until 1 or 0 particles
-		}
-		
+				SplitNode(currentNode->children[i]); //further split node until 1 or 0 particles
+				
+			}
 	}
 	
 }

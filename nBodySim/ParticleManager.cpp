@@ -21,7 +21,7 @@ Particle* ParticleManager::CreateRandomParticle()
 	p->size = FindRandomSize(50, 100); //set size between 50 and 300
 	p->mass = FindVolume(p->size); // set mass to volume
 	p->position = FindRandomPos();
-	p->velocity = FindRandomVel(300);
+	p->velocity = FindRandomVel(50);
 	
 	return p;
 }
@@ -59,9 +59,11 @@ void ParticleManager::Update(float dt, float timeStep)
 		
 	if (barnesHut->Update(dt, timeStep))
 	{
+		barnesHut->DeleteTree();
 		barnesHut->ConstructTree(&particles);
 		barnesHut->CalculateForces(0.5f, &particles);
-		barnesHut->DeleteTree();
+
+
 
 	}
 	
