@@ -15,7 +15,8 @@ public:
 
 	DirectSolver(float gravConst);
 	bool Update(float dt, float timeStep);
-	void Solve(float dt, std::vector<Particle*>* particles);
+	void SolveEuler(float dt, std::vector<Particle*>* particles, float timeStep);
+	void SolveRK4(float dt, std::vector<Particle*>* particles, float timeStep);
 
 };
 

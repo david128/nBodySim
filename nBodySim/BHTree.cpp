@@ -51,17 +51,18 @@ void BHTree::DeleteTree()
 	
 }
 
-void BHTree::CalculateForces(float theta, std::vector<Particle*>* particles)
+void BHTree::CalculateForces(float theta, std::vector<Particle*>* particles, float timeStep)
 {
 
 	for (int i = 0; i < particles->size(); i++) //for all particles find forces applied
 	{
-		TraversNode(particles->at(i), theta,&root);//start at root
+		TraversNode(particles->at(i), theta,&root, timeStep);//start at root
+		particles->at(i)->Update();
 	}
 
 }
 
-void BHTree::TraversNode(Particle* particle, float theta, Node* currentNode)
+void BHTree::TraversNode(Particle* particle, float theta, Node* currentNode, float timeStep)
 {
 	for (auto node : currentNode->children)
 	{
@@ -71,7 +72,7 @@ void BHTree::TraversNode(Particle* particle, float theta, Node* currentNode)
 			{
 				if (node->particle != particle) //do not calculate force of particle on self
 				{
-					CalculateForce(particle, node->averagePos, node->combinedMass);
+					CalculateForce(particle, node->averagePos, node->combinedMass, timeStep);
 				}
 				
 			}
@@ -82,12 +83,12 @@ void BHTree::TraversNode(Particle* particle, float theta, Node* currentNode)
 				if ((node->sideLegnth / dist) < theta)
 				{
 
-					CalculateForce(particle, node->averagePos, node->combinedMass); //suitably far so can use avg mass and CoM
+					CalculateForce(particle, node->averagePos, node->combinedMass, timeStep); //suitably far so can use avg mass and CoM
 				}
 				else
 				{
 					//too close, so need to traverse node further
-					TraversNode(particle, theta, node);
+					TraversNode(particle, theta, node, timeStep);
 				}
 
 			}
@@ -95,7 +96,7 @@ void BHTree::TraversNode(Particle* particle, float theta, Node* currentNode)
 	}
 }
 
-void BHTree::CalculateForce(Particle* particle, Vector3 acm, float cm ) //using euler method
+void BHTree::CalculateForce(Particle* particle, Vector3 acm, float cm, float timeStep ) //using euler method
 {
 	Vector3 diff = particle->position - acm;
 	float dist = diff.length(); //get distance
@@ -103,8 +104,9 @@ void BHTree::CalculateForce(Particle* particle, Vector3 acm, float cm ) //using 
 	float mult = (g * cm) / (dist * dist * dist); //multiplier  (g * mass )/ (distance ^3)
 
 	Vector3 multDiff = Vector3(mult * diff.getX(), mult * diff.getY(), mult * diff.getZ()); //multiply  vector by multiplier to get force
+	multDiff.scale(timeStep);
 	particle->velocity = particle->velocity - multDiff; //new V = old v + acceleration due to gravity
-	particle->Update();
+	
 	
 }
 

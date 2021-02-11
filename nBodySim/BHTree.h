@@ -33,9 +33,9 @@ public:
     void SplitNode(Node* currentNode);
     void DeleteNode(Node* currentNode);
     void DeleteTree();
-    void CalculateForces(float theta, std::vector<Particle*>* particles);
-    void TraversNode(Particle* particle, float theta, Node* node);
-    void CalculateForce(Particle* particle, Vector3 acm, float am);
+    void CalculateForces(float theta, std::vector<Particle*>* particles, float timeStep);
+    void TraversNode(Particle* particle, float theta, Node* node, float timeStep);
+    void CalculateForce(Particle* particle, Vector3 acm, float am, float timeStep);
     void DrawDebug();
     void DrawLines(Node* node);
 
