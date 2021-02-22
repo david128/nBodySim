@@ -27,9 +27,11 @@ void DirectSolver::SolveEuler(float dt, std::vector<Particle*>* particles, float
 	
 	//update vel every time step
 	//loop all particles
+	
 	for (int i = 0; i < particles->size(); i++)
 	{
 		//loop all particles 
+		Vector3 acc = {};
 		for (int j = 0; j < particles->size(); j++)
 		{
 			//if j and i are not same particle then calc j gravitational effect on i
@@ -42,13 +44,13 @@ void DirectSolver::SolveEuler(float dt, std::vector<Particle*>* particles, float
 				float mult = (g * particles->at(j)->mass) / (dist * dist * dist); //multiplier  (g * mass )/ (distance ^3)
 
 				Vector3 multDiff = Vector3(mult * diff.getX(), mult * diff.getY(), mult * diff.getZ()); //multiply  vector by multiplier to get force
-				multDiff.scale(timeStep);
-				particles->at(i)->velocity = particles->at(i)->velocity - multDiff; //new V = old v + acceleration due to gravity
-				int f = 0;
-				f = 1;
+				acc = acc + multDiff;
+				
+
 			}
 		}
-		particles->at(i)->Update();//update particles with new forces
+		acc.scale(timeStep);
+		particles->at(i)->velocity = particles->at(i)->velocity + acc;
 
 	}
 
@@ -116,7 +118,7 @@ void DirectSolver::SolveRK4(float dt, std::vector<Particle*>* particles, float t
 			
 
 		}
-		particles->at(i)->Update();//update particles with new forces
+		particles->at(i)->Update(timeStep);//update particles with new forces
 	}
 
 }

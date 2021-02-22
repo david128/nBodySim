@@ -2,6 +2,7 @@
 #include <math.h>
 
 
+
 Camera::Camera()
 {
 }
@@ -73,6 +74,11 @@ Vector3 Camera::getCameraUp()
 	return up;
 }
 
+void Camera::setXzAngle(float xz)
+{
+	xzAngle =xz;
+}
+
 
 
 void Camera::update()
@@ -86,9 +92,10 @@ void Camera::update()
 	//sinY = sinf(Yaw*3.1415 / 180);
 	//sinP = sinf(Pitch*3.1415 / 180);
 	//sinR = sinf(Roll*3.1415 / 180);
+	
 
-	position.x = look.x + distanceToLook * cosf(xzAngle);
-	position.z = look.x + distanceToLook * sinf(xzAngle);
+	position.x = look.x + distanceToLook * cosf(xzAngle * degToRad);
+	position.z = look.x + distanceToLook * sinf(xzAngle * degToRad);
 	
 	/*forward.x = sinY * cosP;
 	forward.y = sinP;

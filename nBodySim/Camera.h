@@ -22,7 +22,7 @@ public:
 	Vector3 getCameraPos();
 	Vector3 getCameraLook();
 	Vector3 getCameraUp();
-	Vector3 getForward();
+	void setXzAngle(float xz);
 
 	void update();
 	
@@ -40,6 +40,8 @@ private:
 	float Pitch = 0.0f;
 	float Roll = 0.0f;
 	float mouseX, mouseY;
+
+	float degToRad = 3.1416 / 180.0f;
 };
 
 

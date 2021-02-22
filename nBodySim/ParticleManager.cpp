@@ -51,32 +51,36 @@ std::vector<Particle*>* ParticleManager::GetParticles()
 void ParticleManager::Update(float dt, float timeStep)
 {
 
-	//if (direct->Update(dt, timeStep))
+	if (direct->Update(dt, 0.5f))
+	{
+		direct->SolveEuler(dt, &particles, timeStep);
+		UpdateAllParticles(timeStep);
+	}
+		
+	//if (barnesHut->Update(dt, timeStep))
 	//{
-	//	direct->SolveEuler(dt, &particles, timeStep);
+	//	barnesHut->DeleteTree();
+	//	barnesHut->ConstructTree(&particles);
+	//	barnesHut->CalculateForces(0.5f, &particles,timeStep);
 
 	//}
-		
-	if (barnesHut->Update(dt, timeStep))
-	{
-		barnesHut->DeleteTree();
-		barnesHut->ConstructTree(&particles);
-		barnesHut->CalculateForces(0.5f, &particles,timeStep);
-
-	}
-	std::vector<Particle*> testParticles;
-	Particle* p1 = new Particle(10, Vector3(10.0f, 10.0f, 10.0f), 10000000000000000000);
-	Particle* p2 = new Particle(10, Vector3(150.0f, 100.0f, 100.0f), 10000000000000000000);
-	testParticles.push_back(p1);
-	testParticles.push_back(p2);
 
 	
-	if (direct->Update(dt, timeStep))
+	//if (direct->Update(dt, timeStep))
+	//{
+	//	direct->SolveRK4(dt, &particles, timeStep);
+
+	//}
+
+}
+
+void ParticleManager::UpdateAllParticles(float timeStep)
+{
+	for (int i = 0; i < particles.size(); i++)
 	{
-		direct->SolveRK4(dt, &particles, timeStep);
-
+		particles[i]->Update(timeStep);
+		
 	}
-
 }
 
 

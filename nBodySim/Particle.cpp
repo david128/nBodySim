@@ -9,6 +9,14 @@ Particle::Particle(float scale, Vector3 pos, float m) //alows initialisation of 
 	mass = m;
 }
 
+Particle::Particle(float scale, Vector3 pos, float m, Vector3 v) //alows initialisation of size and position
+{
+	size = scale;
+	position = pos;
+	mass = m;
+	velocity = v;
+}
+
 Particle::Particle()
 {
 }
@@ -22,10 +30,14 @@ void Particle::DrawParticle()
 
 	glPushMatrix();
 
+
+
 	//translate to position
-	glTranslatef(position.getX(), position.getY(), position.getZ());
+	glTranslatef(position.getX(), position.getY() , position.getZ() );
 	//scale to size
 	glScalef(size, size, size);
+
+
 
 	//renders sphere
 	float angle = (2 * 3.14159) / 20;
@@ -69,7 +81,9 @@ void Particle::DrawParticle()
 	glPopMatrix();
 }
 
-void Particle::Update()
+void Particle::Update(float timeStep)
 {
-	position = position +velocity; //update position with velocity
+	Vector3 newV = velocity;
+	newV.scale(timeStep);
+	position = position +newV; //update position with velocity
 }

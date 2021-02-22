@@ -43,12 +43,33 @@ Scene::Scene(Input *inp)
 	//particles.push_back(particle4);
 
 	particleManager = new ParticleManager(Vector3(10000.0f, 10000.0f, 10000.0f), g);
-	particleManager->InitSystem(100);
-	//Particle* largeP = new Particle(500, Vector3(0.0f,0.0f,0.0f), 5.24e8f);
-	//largeP->velocity = Vector3(0.5f, 0.04f, 0.0f);
-	//particleManager->AddParticle(largeP);
+	//particleManager->InitSystem(100);
 
 
+
+
+	Particle* sun = new Particle(20.0f, Vector3(0.0f,0.0f,0.0f), 2e30, Vector3(0.0f,0.0f,0.0f));;
+	Particle* mercury = new Particle(20, Vector3(0.0f, 5.0e10f, 0.0f), 3.285e23, Vector3(47000.0f, 0.0f, 0.0f));
+	Particle* venus = new Particle(20, Vector3(0.0f, 1.1e11f, 0.0f), 4.8e24, Vector3(35000.0f, 0.0f, 0.0f));
+	Particle* earth = new Particle(20, Vector3(0.0f, 1.5e11f, 0.0f), 6e24, Vector3(30000.0f, 0.0f, 0.0f));
+	Particle* mars = new Particle(20, Vector3(0.0f, 2.2e11f, 0.0f), 2.4e24, Vector3(24000.0f, 0.0f, 0.0f));
+	Particle* jupiter = new Particle(20, Vector3(7.7e11f, 0.0f, 0.0f), 1e28, Vector3(0.0f, 13000.0f, 0.0f));
+	Particle* saturn = new Particle(20, Vector3(0.0f, 1.4e12f, 0.0f), 5.7e26, Vector3(9000.0f, 0.0f, 0.0f));
+	Particle* uranus = new Particle(20, Vector3(0.0f, 2.8e12f, 0.0f), 8.7e25, Vector3(6835.0f, 0.0f, 0.0f));
+	Particle* neptune = new Particle(20, Vector3(0.0f, 4.5e12f, 0.0f), 1e26, Vector3(5477.0f, 0.0f, 0.0f));
+	Particle* pluto = new Particle(20, Vector3(0.0f, 7.3e12f, 0.0f), 1.3e22, Vector3(4748.0f, 0.0f, 0.0f));
+
+
+	particleManager->AddParticle(sun);
+	particleManager->AddParticle(mercury);
+	particleManager->AddParticle(venus);
+	particleManager->AddParticle(earth);
+	particleManager->AddParticle(mars);
+	particleManager->AddParticle(jupiter);
+	particleManager->AddParticle(saturn);
+	particleManager->AddParticle(uranus);
+	particleManager->AddParticle(neptune);
+	particleManager->AddParticle(pluto);
 
 	
 	InitCamera();
@@ -59,10 +80,11 @@ void Scene::InitCamera()
 {
 	//set camera 
 	camera = new Camera();
+	camera->setXzAngle(90.0f);
 	camera->setCameraLook(Vector3(0.0f, 0.0f, 0.0f));
-	camera->setCameraPos(Vector3(0.0f, 0.0f, -9850.0f));
+	camera->setCameraPos(Vector3(0.0f, 0.0f, 30000.0f));
 	camera->setCameraUp(Vector3(0, 1, 0));
-	camera->SetDistanceToLook(9850.0);
+	camera->SetDistanceToLook(30000.0f);
 
 }
 
@@ -79,7 +101,7 @@ void Scene::render(float dt)
 		particles->at(i)->DrawParticle();
 	}
 
-	//particleManager->barnesHut->DrawDebug();
+
 	glutSwapBuffers();
 
 }
@@ -116,7 +138,7 @@ void Scene::update(float dt)
 	time += dt;
 	particleManager->Update(dt, timeStep);
 	//update camera
-	camera->update();
+	//camera->update();
 	
 }
 
@@ -132,7 +154,7 @@ void Scene::resize(int w, int h)
 	float ratio = (float)w / (float)h;
 	fov = 45.0f;
 	nearPlane = 0.1f;
-	farPlane = 500000.0f;
+	farPlane = 10000000.0f;
 
 	// Use the Projection Matrix
 	glMatrixMode(GL_PROJECTION);

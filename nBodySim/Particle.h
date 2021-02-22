@@ -5,6 +5,7 @@ class Particle
 {
 public:
 	Particle(float s, Vector3 p,float m); 
+	Particle(float s, Vector3 p,float m, Vector3 v); 
 	Particle();
 	~Particle();
 
@@ -13,9 +14,12 @@ public:
 	float mass;
 	//Vector3 acceleration;
 	Vector3 velocity;
+	Vector3 acceleration;
 
 	
 	void DrawParticle();
-	void Update();
+	void Update(float timeStep);
+private:
+	float conversion = 0.000000001;
 };
 

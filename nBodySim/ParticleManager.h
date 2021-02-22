@@ -23,6 +23,7 @@ public:
 	BHTree* barnesHut;
 
 	void Update(float dt, float timeStep);
+	void UpdateAllParticles(float timeStep);
 
 private:
 
