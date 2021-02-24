@@ -17,6 +17,7 @@ public:
 	bool Update(float dt, float timeStep);
 	void SolveEuler(float dt, std::vector<Particle*>* particles, float timeStep);
 	void SolveRK4(float dt, std::vector<Particle*>* particles, float timeStep);
+	void SolveVerlet(float dt, std::vector<Particle*>* particles, float timeStep);
 
 };
 

@@ -83,7 +83,7 @@ void Particle::DrawParticle()
 
 void Particle::Update(float timeStep)
 {
-	Vector3 newV = velocity;
-	newV.scale(timeStep);
-	position = position +newV; //update position with velocity
+	Vector3 VxDt = velocity;
+	VxDt.scale(timeStep);
+	position = position +VxDt; //update position with velocity
 }

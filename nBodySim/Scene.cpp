@@ -43,12 +43,12 @@ Scene::Scene(Input *inp)
 	//particles.push_back(particle4);
 
 	particleManager = new ParticleManager(Vector3(10000.0f, 10000.0f, 10000.0f), g);
-	//particleManager->InitSystem(100);
+	particleManager->InitSystem(100);
 
 
 
 
-	Particle* sun = new Particle(20.0f, Vector3(0.0f,0.0f,0.0f), 2e30, Vector3(0.0f,0.0f,0.0f));;
+	/*Particle* sun = new Particle(20.0f, Vector3(0.0f,0.0f,0.0f), 2e30, Vector3(0.0f,0.0f,0.0f));;
 	Particle* mercury = new Particle(20, Vector3(0.0f, 5.0e10f, 0.0f), 3.285e23, Vector3(47000.0f, 0.0f, 0.0f));
 	Particle* venus = new Particle(20, Vector3(0.0f, 1.1e11f, 0.0f), 4.8e24, Vector3(35000.0f, 0.0f, 0.0f));
 	Particle* earth = new Particle(20, Vector3(0.0f, 1.5e11f, 0.0f), 6e24, Vector3(30000.0f, 0.0f, 0.0f));
@@ -69,7 +69,7 @@ Scene::Scene(Input *inp)
 	particleManager->AddParticle(saturn);
 	particleManager->AddParticle(uranus);
 	particleManager->AddParticle(neptune);
-	particleManager->AddParticle(pluto);
+	particleManager->AddParticle(pluto);*/
 
 	
 	InitCamera();
