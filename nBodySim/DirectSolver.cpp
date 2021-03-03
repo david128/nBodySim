@@ -7,7 +7,7 @@ Vector3 DirectSolver::CalculateAcceleration(Vector3 posI, Particle* pJ)
 	float dist = diff.length(); //get distance
 	float multiplier = (g * pJ->mass) / (dist * dist * dist); //multiplier  (g * mass )/ (distance ^3)
 	Vector3 acc = diff;
-	acc.scale(multiplier);
+	acc.scale(-multiplier); //return as negative as gravitational effect in negative
 	return acc;
 }
 
