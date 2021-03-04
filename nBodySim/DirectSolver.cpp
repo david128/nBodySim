@@ -158,23 +158,24 @@ void DirectSolver::SolveVerlet(float dt, std::vector<Particle*>* particles, floa
 				acc = acc + CalculateAcceleration(particles->at(i)->position, particles->at(j));
 			}
 
-			//new pos = pos(t) + (currentV * h ) + (0.5 * current a * h^2)
-			Vector3 currentVdt = particles->at(i)->velocity;
-			currentVdt.scale(timeStep);
-
-			Vector3 halfADt2 = particles->at(i)->acceleration;
-			halfADt2.scale(0.5f * timeStep * timeStep);
-
-			particles->at(i)->nextPosition = particles->at(i)->position + currentVdt + halfADt2;
-
-			//new v = v(t) + (old a new a) * 0.5 * h
-			Vector3 oldPlusNewA = particles->at(i)->acceleration + acc;
-			oldPlusNewA.scale(0.5f * timeStep);
-
-			particles->at(i)->velocity = particles->at(i)->velocity + oldPlusNewA;
-
-			//store acc for next calc
-			particles->at(i)->acceleration = acc;
 		}
+
+		//new pos = pos(t) + (currentV * h ) + (0.5 * current a * h^2)
+		Vector3 currentVdt = particles->at(i)->velocity;
+		currentVdt.scale(timeStep);
+
+		Vector3 halfADt2 = particles->at(i)->acceleration;
+		halfADt2.scale(0.5f * timeStep * timeStep);
+
+		particles->at(i)->nextPosition = particles->at(i)->position + currentVdt + halfADt2;
+
+		//new v = v(t) + (old a + new a) * 0.5 * h
+		Vector3 oldPlusNewA = particles->at(i)->acceleration + acc;
+		oldPlusNewA.scale(0.5f * timeStep);
+
+		particles->at(i)->velocity = particles->at(i)->velocity + oldPlusNewA;
+
+		//store acc for next calc
+		particles->at(i)->acceleration = acc;
 	}
 }

@@ -31,7 +31,6 @@ void Particle::DrawParticle()
 	glPushMatrix();
 
 
-
 	//translate to position
 	glTranslatef(position.getX(), position.getY() , position.getZ() );
 	//scale to size
