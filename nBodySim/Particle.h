@@ -10,6 +10,7 @@ public:
 	~Particle();
 
 	Vector3 position;
+	Vector3 nextPosition;
 	float size;
 	float mass;
 	//Vector3 acceleration;

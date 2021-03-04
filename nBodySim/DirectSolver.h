@@ -10,7 +10,7 @@ private:
 
 	float time;
 	float g;
-
+	Vector3 CalculateAcceleration(Vector3 posI, Particle* pB);
 public:
 
 	DirectSolver(float gravConst);

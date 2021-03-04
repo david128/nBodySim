@@ -31,7 +31,6 @@ void Particle::DrawParticle()
 	glPushMatrix();
 
 
-
 	//translate to position
 	glTranslatef(position.getX(), position.getY() , position.getZ() );
 	//scale to size
@@ -83,7 +82,5 @@ void Particle::DrawParticle()
 
 void Particle::Update(float timeStep)
 {
-	Vector3 VxDt = velocity;
-	VxDt.scale(timeStep);
-	position = position +VxDt; //update position with velocity
+	position = nextPosition;
 }

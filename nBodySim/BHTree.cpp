@@ -79,7 +79,9 @@ void BHTree::CalculateForces(float theta, std::vector<Particle*>* particles, flo
 	for (int i = 0; i < particles->size(); i++) //for all particles find forces applied
 	{
 		TraversNode(particles->at(i), theta,&root, timeStep);//start at root
-		particles->at(i)->Update(timeStep);
+		Vector3 vDt = particles->at(i)->velocity;
+		vDt.scale(timeStep);
+		particles->at(i)->nextPosition = particles->at(i)->position + vDt;
 	}
 
 }
