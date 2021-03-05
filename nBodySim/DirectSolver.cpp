@@ -108,7 +108,7 @@ void DirectSolver::SolveRK4(float dt, std::vector<Particle*>* particles, float t
 
 				//kv3 = h * ((x(n) + kx2/2) - x[j](n)) * (g * m[j] / |(x(n) + kx2/2) - x[j](n) | ^ 3)
 				Vector3 kv3 = kx2;
-				kx3.scale(0.5f);
+				kv3.scale(0.5f);
 				kv3 = particles->at(i)->position + kv3;
 				kv3 = CalculateAcceleration(kv3, particles->at(j));
 				kv3.scale(timeStep);
@@ -126,6 +126,7 @@ void DirectSolver::SolveRK4(float dt, std::vector<Particle*>* particles, float t
 				kx2.scale(1.0f / 3.0f);
 				kx3.scale(1.0f / 3.0f);
 				kx4.scale(1.0f / 6.0f);
+
 				kv1.scale(1.0f / 6.0f);
 				kv2.scale(1.0f / 3.0f);
 				kv3.scale(1.0f / 3.0f);

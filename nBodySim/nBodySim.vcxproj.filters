@@ -80,8 +80,9 @@
     <ClInclude Include="DirectSolver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BH.cuh" />
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="par.cu" />
+    <CudaCompile Include="BH.cu" />
   </ItemGroup>
 </Project>

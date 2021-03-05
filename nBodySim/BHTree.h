@@ -2,9 +2,7 @@
 #include <vector>
 #include "Vector3.h"
 #include "Particle.h"
-#include "cuda_runtime.h"
-#include "cuda.h"
-#include "device_launch_parameters.h"
+
 
 struct Node {
 
@@ -32,11 +30,9 @@ public:
 
     bool Update(float dt, float timeStep);
 
-    void ConstructTree(std::vector<Particle*>* particles);
+    virtual void ConstructTree(std::vector<Particle*>* particles);
     void ConstructTreeInP(std::vector<Particle*>* particles);
     void SplitNode(Node* currentNode);
-    __global__ void SplitNodeInP(Node* currentNode);
-    void SplitOnce();
     void DeleteNode(Node* currentNode);
     void DeleteTree();
     void CalculateForces(float theta, std::vector<Particle*>* particles, float timeStep);
@@ -45,7 +41,7 @@ public:
     void DrawDebug();
     void DrawLines(Node* node);
 
-private:
+protected:
 
     Node root;
     Vector3 extents;

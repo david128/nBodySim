@@ -57,12 +57,12 @@ void ParticleManager::Update(float dt, float timeStep)
 	//	UpdateAllParticles(timeStep);
 	//}
 
-	if (direct->Update(dt, 0.5f))
-	{
-		direct->SolveVerlet(dt, &particles, timeStep);
-		UpdateAllParticles(timeStep);
-	}
-		
+	//if (direct->Update(dt, 0.5f))
+	//{
+	//	direct->SolveVerlet(dt, &particles, timeStep);
+	//	UpdateAllParticles(timeStep);
+	//}
+	//	
 	//if (barnesHut->Update(dt, timeStep))
 	//{
 	//	barnesHut->DeleteTree();
@@ -72,11 +72,11 @@ void ParticleManager::Update(float dt, float timeStep)
 	//}
 
 
-	//if (direct->Update(dt, timeStep))
-	//{
-	//	direct->SolveRK4(dt, &particles, timeStep);
-	//	UpdateAllParticles(timeStep);
-	//}
+	if (direct->Update(dt, timeStep))
+	{
+		direct->SolveRK4(dt, &particles, timeStep);
+		UpdateAllParticles(timeStep);
+	}
 
 }
 
