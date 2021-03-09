@@ -4,6 +4,7 @@
 #include "Vector3.h"
 #include "DirectSolver.h"
 #include "BHTree.h"
+#include "BH.cuh"
 
 class ParticleManager
 {
@@ -21,6 +22,7 @@ public:
 
 	DirectSolver* direct;
 	BHTree* barnesHut;
+	BHParallelTree* parallelBarnesHut;
 
 	void Update(float dt, float timeStep);
 	void UpdateAllParticles(float timeStep);

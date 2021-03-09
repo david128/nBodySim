@@ -8,7 +8,8 @@ class BHParallelTree : BHTree
 public:
 	void ConstructTree(std::vector<Particle*>* particles);
 	void SplitOnce();
-	//void SplitNodeInP(Node* currentNode);
+	void SplitNodeInP();
+	void DoFoo();
 
 };
 
