@@ -1,7 +1,11 @@
-﻿#include "BHTree.h"
+﻿
+#pragma once
+
+#include "BHTree.h"
 #include "cuda_runtime.h"
 #include "cuda.h"
 #include "device_launch_parameters.h"
+
 
 class BHParallelTree : BHTree
 {

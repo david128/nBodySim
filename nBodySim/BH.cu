@@ -2,7 +2,7 @@
 #include "cuda_runtime.h"
 #include "cuda.h"
 #include "device_launch_parameters.h"
-#include "implementKernel.cuh"
+
 
 __global__ void SplitNodeInP(Node* currentNode)
 {
@@ -104,15 +104,14 @@ void BHParallelTree::SplitOnce()
 
 void BHParallelTree::DoFoo()
 {
-	int* f;
+	//int* f;
 
-	cudaMalloc(&f, 2 * sizeof(int));
+	//cudaMalloc(&f, 2 * sizeof(int));
 
 	//printf("hello Dofoo");
-	split<<<1,1>>>(f);
+	//AllPairs << <1, 2 >> > (n, particles*, timeStep);
 
-	cudaFree(f);
+	//cudaFree(f);
 
-	int s = *f;
 }
 
