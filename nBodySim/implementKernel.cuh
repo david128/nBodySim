@@ -1,56 +1,70 @@
 ﻿#include "cuda_runtime.h"
 #include "cuda.h"
 #include "device_launch_parameters.h"
-#include "ParticleManager.h"
+#include "Particle.h"
 
 
-__global__
-void split(int* f)
-{
 
-}
+
 
 //n = number of bodies
 //pp =particle position(x/y/z)
 //pm = particle mass
 __global__
-void AllPairs(unsigned int n, float* ppx,float* ppy, float* ppz, float* pm, float timeStep)
+void AllPairs(unsigned int n, Particle* pArray, float timeStep)
 {
 	int id = blockDim.x * blockIdx.x + threadIdx.x;
 	int numThreads = blockDim.x * gridDim.x;
 
 	float g = 6.67408e-11f; //grav constant
 
-	for (int i = id; i < 100; i += numThreads) //this will loop in i, incrementing by number of threads in parallel
+	for (int i = id; i < n; i += numThreads) //this will loop in i, incrementing by number of threads in parallel
 	{
 		float acc[3] = { 0.0f,0.0f,0.0f };
-		for (int j = 0; j < 100; j++) //j loop that increments by 1 calculating acc in serial
+		for (int j = 0; j < n; j++) //j loop that increments by 1 calculating acc in serial
 		{
 		
-			float diff[3] = { ppx[i] - ppx[j], ppy[i] - ppy[j], ppz[i] - ppz[j] };
-			float dist = sqrtf(diff[0]*diff[0] + diff[1] * diff[1]+ diff[2] * diff[2]); //get distance
-			float multiplier = (g * pm[j]) / (dist * dist * dist); //multiplier  (g * mass )/ (distance ^3)
+			if (i!=j)
+			{
+				float diff[3] = { pArray[i].position.x - pArray[j].position.x, pArray[i].position.y - pArray[j].position.y, pArray[i].position.z - pArray[j].position.z };
+				float dist = sqrtf(diff[0] * diff[0] + diff[1] * diff[1] + diff[2] * diff[2]); //get distance
+				float multiplier = (g * pArray[j].mass) / (dist * dist * dist); //multiplier  (g * mass )/ (distance ^3)
 
 
-			diff[0] = diff[0] * -multiplier;
-			diff[1] = diff[1] * -multiplier;
-			diff[2] = diff[2] * -multiplier;
+				diff[0] = diff[0] * -multiplier;
+				diff[1] = diff[1] * -multiplier;
+				diff[2] = diff[2] * -multiplier;
 
-			acc[0] += diff[0];
-			acc[1] += diff[1];
-			acc[2] += diff[2];
+				acc[0] += diff[0];
+				acc[1] += diff[1];
+				acc[2] += diff[2];
+			}
+
+
 			
 		}
 		//v(t+1) = v(t) +a(t) *dt
 		acc[0] *= timeStep;
 		acc[1] *= timeStep;
 		acc[2] *= timeStep;
+
+		pArray[i].acceleration.x = acc[0];
+		pArray[i].acceleration.y = acc[1];
+		pArray[i].acceleration.z = acc[2];
+
 		//particles->at(i)->velocity = particles->at(i)->velocity + acc;
+		pArray[i].velocity.x += acc[0];
+		pArray[i].velocity.y += acc[1];
+		pArray[i].velocity.z += acc[2];
 
 		////x(t+1) = x(t) + v(t)*dt
 		//Vector3 vDt = particles->at(i)->velocity;
+		float vdt[3] = { pArray[i].velocity.x  * timeStep,pArray[i].velocity.y * timeStep,pArray[i].velocity.z * timeStep };
 		//vDt.scale(timeStep);
 		//particles->at(i)->nextPosition = particles->at(i)->position + vDt;
+		pArray[i].nextPosition.x= pArray[i].position.x + vdt[0];
+		pArray[i].nextPosition.y= pArray[i].position.y + vdt[1];
+		pArray[i].nextPosition.z= pArray[i].position.z + vdt[2];
 	}
 
 }

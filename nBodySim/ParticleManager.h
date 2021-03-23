@@ -9,15 +9,15 @@
 class ParticleManager
 {
 public:
-	ParticleManager(Vector3 extents, float g);
+	ParticleManager(Vector3 extents, float g, int numberOfParticles);
 
 	Particle* CreateRandomParticle();
 	void AddParticle(Particle* part);
 	void InitSystem(int hugeParticles, int largeParticles, int mediumParticles, int smallParticles );
-	void InitSystem(int numParticles);
+	void InitSystem();
 
 	Particle* GetParticle(int id);
-	std::vector<Particle*>* GetParticles();
+	Particle* GetParticlesArray();
 	
 
 	DirectSolver* direct;
@@ -27,13 +27,17 @@ public:
 	void Update(float dt, float timeStep);
 	void UpdateAllParticles(float timeStep);
 
+
+	int n;
 private:
 
 	Vector3 posSystemExtents;
 	Vector3 negSystemExtents;
 
 	//particles
-	std::vector<Particle*> particles;
+
+	Particle* particlesArray;
+
 	Particle hugeParticle;
 	Particle largeParticle;
 	Particle mediumParticle;
@@ -43,5 +47,6 @@ private:
 	Vector3 FindRandomPos();
 	Vector3 FindRandomVel(int maxSpeed);
 	float FindVolume(float radius);
+
 };
 
