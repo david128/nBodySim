@@ -13,12 +13,12 @@
 __global__
 void AllPairs(unsigned int n, Particle* pArray, float timeStep)
 {
-	int id = blockDim.x * blockIdx.x + threadIdx.x;
-	int numThreads = blockDim.x * gridDim.x;
+	int id = blockDim.x * blockIdx.x + threadIdx.x; //id of current thread
+	int stride = blockDim.x * gridDim.x; //used to stride by number of threads
 
 	float g = 6.67408e-11f; //grav constant
 
-	for (int i = id; i < n; i += numThreads) //this will loop in i, incrementing by number of threads in parallel
+	for (int i = id; i < n; i += stride) //this will loop in i, incrementing by number of threads in parallel
 	{
 		float acc[3] = { 0.0f,0.0f,0.0f };
 		for (int j = 0; j < n; j++) //j loop that increments by 1 calculating acc in serial

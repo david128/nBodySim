@@ -22,7 +22,7 @@ public:
 
 	DirectSolver* direct;
 	BHTree* barnesHut;
-	BHParallelTree* parallelBarnesHut;
+	GPUCalls* parallelBarnesHut;
 
 	void Update(float dt, float timeStep);
 	void UpdateAllParticles(float timeStep);

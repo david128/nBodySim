@@ -5,38 +5,24 @@
 
 
 
+void GPUCalls::InitDevice(int n)
+{
+	threadsPerBlock = 256;
+	numberOfBlocks = (n + threadsPerBlock - 1) / threadsPerBlock;
+}
 
 
-
-void BHParallelTree::DoFoo(int n , Particle* particles)
+void GPUCalls::DoFoo(int n , Particle* particles)
 {
 	
 
 
-	//int bytes = n * sizeof(Particle);
-	//Particle* pArray;
-	//
-	//
-	//cudaMallocManaged(&pArray, bytes);
 
-	//for (int i = 0; i < n; i++)
-	//{
-	//	pArray[i] = *particles->at(i);
-	//}
-
-
-	//int* f;
-
-	//cudaMalloc(&f, 2 * sizeof(int));
-
-	//printf("hello Dofoo");
-	AllPairs << <1, 1 >> > (n, particles, 0.1f);
+	AllPairs << <threadsPerBlock, numberOfBlocks >> > (n, particles, 0.1f);
 
 	cudaDeviceSynchronize();
 
-	//float y = pArray[1].acceleration.y;
 
-	//cudaFree(pArray);
 
 }
 

@@ -81,13 +81,13 @@ void ParticleManager::Update(float dt, float timeStep)
 	//	UpdateAllParticles(timeStep);
 	//}
 
-	if (direct->Update(dt, 0.5f))
-	{
-		//printf("hello pM");
-		parallelBarnesHut->DoFoo(n, particlesArray);
-		UpdateAllParticles(timeStep);
+	//if (direct->Update(dt, 0.5f))
+	//{
+	//	//printf("hello pM");
+	//	parallelBarnesHut->DoFoo(n, particlesArray);
+	//	UpdateAllParticles(timeStep);
 
-	}
+	//}
 
 
 	//if (direct->Update(dt, timeStep))
