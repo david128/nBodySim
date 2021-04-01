@@ -7,6 +7,7 @@ Particle::Particle(float scale, Vector3 pos, float m) //alows initialisation of 
 	size = scale;
 	position = pos;
 	mass = m;
+	nextPosition = pos;
 }
 
 Particle::Particle(float scale, Vector3 pos, float m, Vector3 v) //alows initialisation of size and position
@@ -15,6 +16,7 @@ Particle::Particle(float scale, Vector3 pos, float m, Vector3 v) //alows initial
 	position = pos;
 	mass = m;
 	velocity = v;
+	nextPosition = pos;
 }
 
 Particle::Particle()

@@ -1,5 +1,6 @@
 #include "BHTree.h"
 
+
 BHTree::BHTree(float halfSide , float gravConst)
 {
 	
@@ -31,7 +32,6 @@ bool BHTree::Update(float dt, float timeStep)
 void BHTree::ConstructTree (std::vector<Particle*>* particles)
 {
 
-	
 	root.particles = *particles;
 	root.particleCount = particles->size();
 	if (particles->size() > 1)
@@ -39,7 +39,27 @@ void BHTree::ConstructTree (std::vector<Particle*>* particles)
 		SplitNode(&root);
 	}
 	
+}
+
+void BHTree::ConstructTreeInP(std::vector<Particle*>* particles)
+{
+	//split node into 8 but do not recursively split further
+
+	//in parrallel further split each node
+
 	
+	root.particles = *particles;
+	root.particleCount = particles->size();
+	if (particles->size() > 1)
+	{
+		//SplitOnce();
+
+	}
+
+	for (int i = 0; i < 8; i++)
+	{
+		//SplitNodeInP<<<i, 1, >>>(&root);
+	}
 }
 
 void BHTree::DeleteTree()
@@ -226,6 +246,9 @@ void BHTree::SplitNode(Node* currentNode)
 	}
 	
 }
+
+
+
 
 void BHTree::DeleteNode(Node* currentNode)
 {

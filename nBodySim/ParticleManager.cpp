@@ -1,14 +1,23 @@
 #include "ParticleManager.h"
 #include <time.h> 
 
+#include "cuda_runtime.h"
+#include "cuda.h"
 
-ParticleManager::ParticleManager(Vector3 extents, float g)
+
+ParticleManager::ParticleManager(Vector3 extents, float g, int numberOfParticles)
 {
 	posSystemExtents = extents;
 	negSystemExtents = extents;
 	negSystemExtents.scale(-1.0f);
 	direct = new DirectSolver(g);
 	barnesHut = new BHTree(extents.x*10.0f, g);
+
+	n = numberOfParticles;
+
+	int bytes = n * sizeof(Particle);
+
+	cudaMallocManaged(&particlesArray, bytes);
 
 }
 
@@ -28,47 +37,56 @@ Particle* ParticleManager::CreateRandomParticle()
 
 void ParticleManager::AddParticle(Particle* part)
 {
-	particles.push_back(part);
+	//particles.push_back(part);
 }
 	
 
-void ParticleManager::InitSystem(int numParticles)
+void ParticleManager::InitSystem()
 {
+	
 	srand(time(NULL));
-	for (int i = 0; i < numParticles; i++)
+	for (int i = 0; i < n; i++)
 	{
 		//create and store particle
-		particles.push_back(CreateRandomParticle());
+		particlesArray[i] = *CreateRandomParticle();
 	}
 
 }	
 
-std::vector<Particle*>* ParticleManager::GetParticles()
+Particle* ParticleManager::GetParticlesArray()
 {
-	return &particles;
+	return particlesArray;
 }
 
 void ParticleManager::Update(float dt, float timeStep)
 {
 
-	//if (direct->Update(dt, 0.5f))
-	//{
-	//	direct->SolveEuler(dt, &particles, timeStep);
-	//	UpdateAllParticles(timeStep);
-	//}
-
 	if (direct->Update(dt, 0.5f))
 	{
-		direct->SolveVerlet(dt, &particles, timeStep);
+		direct->SolveEuler(dt, particlesArray, timeStep, n);
 		UpdateAllParticles(timeStep);
 	}
-		
+
+	//if (direct->Update(dt, 0.5f))
+	//{
+	//	direct->SolveVerlet(dt, &particles, timeStep);
+	//	UpdateAllParticles(timeStep);
+	//}
+	//	
 	//if (barnesHut->Update(dt, timeStep))
 	//{
 	//	barnesHut->DeleteTree();
 	//	barnesHut->ConstructTree(&particles);
 	//	barnesHut->CalculateForces(0.5f, &particles,timeStep);
 	//	UpdateAllParticles(timeStep);
+	//}
+
+	//if (direct->Update(dt, 0.5f))
+	//{
+	//	//printf("hello pM");
+	//	parallelBarnesHut->DoFoo(n, particlesArray);
+	//	UpdateAllParticles(timeStep);
+
 	//}
 
 
@@ -82,9 +100,9 @@ void ParticleManager::Update(float dt, float timeStep)
 
 void ParticleManager::UpdateAllParticles(float timeStep)
 {
-	for (int i = 0; i < particles.size(); i++)
+	for (int i = 0; i < n; i++)
 	{
-		particles[i]->Update(timeStep);
+		particlesArray[i].Update(timeStep);
 		
 	}
 }

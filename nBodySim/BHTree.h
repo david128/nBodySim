@@ -3,6 +3,7 @@
 #include "Vector3.h"
 #include "Particle.h"
 
+
 struct Node {
 
 
@@ -29,7 +30,8 @@ public:
 
     bool Update(float dt, float timeStep);
 
-    void ConstructTree(std::vector<Particle*>* particles);
+    virtual void ConstructTree(std::vector<Particle*>* particles);
+    void ConstructTreeInP(std::vector<Particle*>* particles);
     void SplitNode(Node* currentNode);
     void DeleteNode(Node* currentNode);
     void DeleteTree();
@@ -39,7 +41,7 @@ public:
     void DrawDebug();
     void DrawLines(Node* node);
 
-private:
+protected:
 
     Node root;
     Vector3 extents;
