@@ -4,12 +4,12 @@
 #include <vector>
 
 
-class GPUCalls 
+class DirectGPU 
 {
 public:
 
 	void InitDevice(int n);	
-	void DoFoo(int n, Particle*  particles);
+	void AllPairsEuler(int n, Particle*  particles);
 
 
 private:

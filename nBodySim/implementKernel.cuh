@@ -2,14 +2,13 @@
 #include "cuda.h"
 #include "device_launch_parameters.h"
 #include "Particle.h"
+#include "BarnesHut.cuh"
 
 
 
 
 
 //n = number of bodies
-//pp =particle position(x/y/z)
-//pm = particle mass
 __global__
 void AllPairs(unsigned int n, Particle* pArray, float timeStep)
 {
@@ -52,67 +51,93 @@ void AllPairs(unsigned int n, Particle* pArray, float timeStep)
 		pArray[i].acceleration.y = acc[1];
 		pArray[i].acceleration.z = acc[2];
 
-		//particles->at(i)->velocity = particles->at(i)->velocity + acc;
 		pArray[i].velocity.x += acc[0];
 		pArray[i].velocity.y += acc[1];
 		pArray[i].velocity.z += acc[2];
 
-		////x(t+1) = x(t) + v(t)*dt
-		//Vector3 vDt = particles->at(i)->velocity;
 		float vdt[3] = { pArray[i].velocity.x  * timeStep,pArray[i].velocity.y * timeStep,pArray[i].velocity.z * timeStep };
-		//vDt.scale(timeStep);
-		//particles->at(i)->nextPosition = particles->at(i)->position + vDt;
+
 		pArray[i].nextPosition.x= pArray[i].position.x + vdt[0];
 		pArray[i].nextPosition.y= pArray[i].position.y + vdt[1];
 		pArray[i].nextPosition.z= pArray[i].position.z + vdt[2];
 	}
 
 }
-//
-//__global__ void KernelcomputeForces(unsigned int n, float* gm, float* gpx, float* gpy, float* gpz, float* gfx, float* gfy, float* gfz) {
-//	int tid = blockDim.x * blockIdx.x + threadIdx.x;
-//	int numThreads = blockDim.x * gridDim.x;
-//
-//	float GRAVITY = 0.00001f;
-//
-//	//compare all with all
-//	for (unsigned int ia = tid; ia < n; ia += numThreads) {
-//		float lfx = 0.0f;
-//		float lfy = 0.0f;
-//		float lfz = 0.0f;
-//
-//		for (unsigned int ib = 0; ib < n; ib++) {
-//			//compute distance
-//			float dx = (gpx[ib] - gpx[ia]);
-//			float dy = (gpy[ib] - gpy[ia]);
-//			float dz = (gpz[ib] - gpz[ia]);
-//			//float distance = sqrt( dx*dx + dy*dy + dz*dz );
-//			float distanceSquared = dx * dx + dy * dy + dz * dz;
-//
-//			//prevent slingshots and division by zero
-//			//distance += 0.1f;
-//			distanceSquared += 0.01f;
-//
-//			//calculate gravitational magnitude between the bodies
-//			//float magnitude = GRAVITY * ( gm[ia] * gm[ib] ) / ( distance * distance * distance * distance );
-//			float magnitude = GRAVITY * (gm[ia] * gm[ib]) / (distanceSquared);
-//
-//			//calculate forces for the bodies
-//			//magnitude times direction
-//			lfx += magnitude * (dx);
-//			lfy += magnitude * (dy);
-//			lfz += magnitude * (dz);
-//		}
-//
-//		//stores local memory to global memory
-//		gfx[ia] = lfx;
-//		gfy[ia] = lfy;
-//		gfz[ia] = lfz;
-//	}
-//}
 
-//extern void GPUcomputeForces(unsigned int n, float* gm, float* gpx, float* gpy, float* gpz, float* gfx, float* gfy, float* gfz) {
-//	dim3 gridDim(16, 1, 1); //specifys how many blocks in three possible dimensions
-//	dim3 blockDim(512, 1, 1); //threads per block
-//	KernelcomputeForces << <gridDim, blockDim >> > (n, gm, gpx, gpy, gpz, gfx, gfy, gfz);
-//}
+__global__
+void buildTree(unsigned int n, Particle* pArray, NodeGPU* root)
+{
+	int bodyIndex = threadIdx.x + blockIdx.x * blockDim.x;  //index of body based on thread 
+	int stride = blockDim.x * gridDim.x; //stride legnth based on number of threads
+
+	
+
+	//traverse tree until get to leaf node,
+
+	NodeGPU* currentNode = root;
+	
+	while (bodyIndex < n)
+	{
+		if (currentNode->particleCount == 0)
+		{
+			//insert particle
+			currentNode->particles[0] = pArray[bodyIndex];
+			currentNode->particleCount++;
+
+		}
+		else if(currentNode->particleCount > 0)
+		{
+			//find direction centre point of current node
+			float halfSide = currentNode->sideLegnth * 0.5;
+			float parentCentreX = currentNode->position.x - halfSide;
+			float parentCentreY = currentNode->position.y - halfSide;
+			float parentCentreZ = currentNode->position.z - halfSide;
+
+			if (parentCentreX == 0.0f || parentCentreY == 0.0f || parentCentreZ == 0.0f)
+			{
+				parentCentreX = 0.01f;//alter to avoid dividing by 0
+				parentCentreY = 0.01f;
+				parentCentreZ = 0.01f;
+			}
+
+			float dirX = pArray[bodyIndex].position.x - parentCentreX;
+			float dirY = pArray[bodyIndex].position.y - parentCentreY;
+			float dirZ = pArray[bodyIndex].position.z - parentCentreZ;
+
+			dirX = dirX / abs(dirX);
+			dirY = dirY / abs(dirY);
+			dirZ = dirZ / abs(dirZ);
+
+			int childIndex = 0;
+
+			if (dirX < 0.0) //we have halfed the octant now, so will either be index (0,1,2,3) or (4,5,6,7)
+			{
+				childIndex = 4;
+			}
+			if (dirY < 0.0) //half it again from  first one, if in (0,1,2,3) section on X if dirY >0 then will have possible values of (0/1) if dirY < 0 then possible (2/3)
+			{
+				childIndex = childIndex + 2;
+			}
+			if (dirZ < 0.0) //final split, if childIndex is still 0 then value will be either 0 or 1
+			{
+				childIndex = childIndex + 1;
+			}
+
+			bool inserted = false;
+			while (!inserted) //
+			{
+				//check if cell is locked
+				if (!currentNode->children[childIndex]->locked)
+				{
+					//now insert child
+					
+					
+				}
+			}
+
+		}
+	}
+
+}
+
+

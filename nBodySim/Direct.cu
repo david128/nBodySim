@@ -1,18 +1,18 @@
-﻿#include "BH.cuh"
+﻿#include "Direct.cuh"
 
 #include "implementKernel.cuh"
 
 
 
 
-void GPUCalls::InitDevice(int n)
+void DirectGPU::InitDevice(int n)
 {
 	threadsPerBlock = 256;
 	numberOfBlocks = (n + threadsPerBlock - 1) / threadsPerBlock;
 }
 
 
-void GPUCalls::DoFoo(int n , Particle* particles)
+void DirectGPU::AllPairsEuler(int n , Particle* particles)
 {
 	
 
