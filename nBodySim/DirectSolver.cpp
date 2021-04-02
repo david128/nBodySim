@@ -146,6 +146,27 @@ void DirectSolver::SolveRK4(float dt, Particle* particles, float timeStep, int n
 
 void DirectSolver::SolveVerlet(float dt, Particle* particles, float timeStep, int n)
 {
+
+	for (int i = 0; i < n; i ++ )
+	{
+		//new pos = pos(t) + (currentV * h ) + (0.5 * current a * h^2)
+		Vector3 currentVdt = particles[i].velocity;
+		currentVdt.scale(timeStep);
+
+		Vector3 halfADt2 = particles[i].acceleration;
+		halfADt2.scale(0.5f * timeStep * timeStep);
+
+		particles[i].nextPosition = particles[i].position + currentVdt + halfADt2;
+		particles[i].position = particles[i].position + currentVdt + halfADt2;
+	}
+
+	for (int i = 0; i < n; i ++ )
+	{
+		Vector3 halfAccDt = particles[i].acceleration;
+		halfAccDt.scale(0.5f * timeStep);
+		particles[i].velocity += halfAccDt;
+	}
+
 	for (int i = 0; i < n; i++)
 	{
 		Vector3 acc = {};
@@ -161,22 +182,74 @@ void DirectSolver::SolveVerlet(float dt, Particle* particles, float timeStep, in
 
 		}
 
-		//new pos = pos(t) + (currentV * h ) + (0.5 * current a * h^2)
-		Vector3 currentVdt = particles[i].velocity;
-		currentVdt.scale(timeStep);
-
-		Vector3 halfADt2 = particles[i].acceleration;
-		halfADt2.scale(0.5f * timeStep * timeStep);
-
-		particles[i].nextPosition = particles[i].position + currentVdt + halfADt2;
-
-		//new v = v(t) + (old a + new a) * 0.5 * h
-		Vector3 oldPlusNewA = particles[i].acceleration + acc;
-		oldPlusNewA.scale(0.5f * timeStep);
-
-		particles[i].velocity = particles[i].velocity + oldPlusNewA;
-
-		//store acc for next calc
 		particles[i].acceleration = acc;
 	}
+
+
+	for (int i = 0; i < n; i++)
+	{
+		Vector3 halfAccDt = particles[i].acceleration;
+		halfAccDt.scale(0.5f * timeStep);
+		particles[i].velocity += halfAccDt;
+	}
+
+	//for (int i = 0; i < n; i++)
+	//{
+	//	Vector3 acc = {};
+	//	//loop all particles 
+	//	for (int j = 0; j < n; j++)
+	//	{
+	//		//if j and i are not same particle then calc j gravitational effect on i
+	//		if (j != i)
+	//		{
+	//			//sum accelerations
+	//			acc = acc + CalculateAcceleration(particles[i].position, &particles[j]);
+	//		}
+
+	//	}
+
+	//	//if (first[i] == true)
+	//	//{
+	//	//	particles[i].acceleration = acc;
+	//	//	first[i] = false;
+	//	//}
+
+	//	////new pos = pos(t) + (currentV * h ) + (0.5 * current a * h^2)
+	//	//Vector3 currentVdt = particles[i].velocity;
+	//	//currentVdt.scale(timeStep);
+
+	//	//Vector3 halfADt2 = particles[i].acceleration;
+	//	//halfADt2.scale(0.5f * timeStep * timeStep);
+
+	//	//particles[i].nextPosition = particles[i].position + currentVdt + halfADt2;
+
+	//	////new v = v(t) + (old a + new a) * 0.5 * h
+	//	//Vector3 oldPlusNewA = particles[i].acceleration + acc;
+	//	//oldPlusNewA.scale(0.5f * timeStep);
+
+	//	//particles[i].velocity = particles[i].velocity + oldPlusNewA;
+
+	//	////store acc for next calc
+	//	//particles[i].acceleration = acc;
+
+
+	//	Vector3 velHalfStep = particles[i].acceleration;
+	//	velHalfStep.scale(0.5f * timeStep);
+	//	velHalfStep  = particles[i].velocity + velHalfStep;
+
+	//	Vector3 newVHS = velHalfStep;
+	//	newVHS.scale(timeStep);
+
+	//	particles[i].nextPosition = particles[i].position + newVHS;
+
+	//	particles[i].acceleration = acc;
+
+	//	acc.scale(0.5f * timeStep);
+
+	//	particles[i].velocity = velHalfStep + acc;
+
+	//	
+
+
+	//}
 }

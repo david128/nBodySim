@@ -53,6 +53,16 @@ void ParticleManager::InitSystem()
 
 }	
 
+void ParticleManager::InitTestSystem()
+{
+	Particle* p1 = new Particle(10, Vector3(0.0f, 0.0f, 0.0f), 60000000000000, Vector3(0.0f, 0.0f, 0.0f));
+	Particle* p2 = new Particle(5, Vector3(0.0f, 35.0f, 0.0f), 50, Vector3(10.5f, 0.0f, 0.0f));
+	particlesArray[0] = *p1;
+	particlesArray[1] = *p2;
+
+
+}
+
 Particle* ParticleManager::GetParticlesArray()
 {
 	return particlesArray;
@@ -61,17 +71,17 @@ Particle* ParticleManager::GetParticlesArray()
 void ParticleManager::Update(float dt, float timeStep)
 {
 
-	if (direct->Update(dt, 0.5f))
-	{
-		direct->SolveEuler(dt, particlesArray, timeStep, n);
-		UpdateAllParticles(timeStep);
-	}
-
 	//if (direct->Update(dt, 0.5f))
 	//{
-	//	direct->SolveVerlet(dt, &particles, timeStep);
+	//	direct->SolveEuler(dt, particlesArray, timeStep, n);
 	//	UpdateAllParticles(timeStep);
 	//}
+
+	if (direct->Update(dt, 0.5f))
+	{
+		direct->SolveVerlet(dt, particlesArray, timeStep,  n);
+		UpdateAllParticles(timeStep);
+	}
 	//	
 	//if (barnesHut->Update(dt, timeStep))
 	//{

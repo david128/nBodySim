@@ -42,11 +42,11 @@ Scene::Scene(Input *inp)
 	//particles.push_back(particle3);
 	//particles.push_back(particle4);
 
-	particleManager = new ParticleManager(Vector3(10000.0f, 10000.0f, 10000.0f), g, 100);
-	particleManager->InitSystem();
+	particleManager = new ParticleManager(Vector3(10000.0f, 10000.0f, 10000.0f), g, 2);
+	particleManager->InitTestSystem();
 
-	/*Particle* p1 = new Particle(10, Vector3(0.0f, 0.0f, 0.0f), 60000000000000, Vector3(0.0f, 0.0f, 0.0f));
-	Particle* p2 = new Particle(5, Vector3(0.0f, 35.0f, 0.0f), 50, Vector3(10.5f, 0.0f, 0.0f));*/
+	Particle* p1 = new Particle(10, Vector3(0.0f, 0.0f, 0.0f), 60000000000000, Vector3(0.0f, 0.0f, 0.0f));
+	Particle* p2 = new Particle(5, Vector3(0.0f, 35.0f, 0.0f), 50, Vector3(10.5f, 0.0f, 0.0f));
 
 	//Particle* sun = new Particle(20.0f, Vector3(0.0f,0.0f,0.0f), 2e30, Vector3(0.0f,0.0f,0.0f));;
 	//Particle* mercury = new Particle(20, Vector3(0.0f, 5.0e10f, 0.0f), 3.285e23, Vector3(47000.0f, 0.0f, 0.0f));
@@ -85,9 +85,9 @@ void Scene::InitCamera()
 	camera = new Camera();
 	camera->setXzAngle(90.0f);
 	camera->setCameraLook(Vector3(0.0f, 0.0f, 0.0f));
-	camera->setCameraPos(Vector3(0.0f, 0.0f, 30000.0f));
+	camera->setCameraPos(Vector3(0.0f, 0.0f, 500.0f));
 	camera->setCameraUp(Vector3(0, 1, 0));
-	camera->SetDistanceToLook(30000.0f);
+	camera->SetDistanceToLook(500.0f);
 
 }
 

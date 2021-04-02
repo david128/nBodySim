@@ -15,6 +15,7 @@ public:
 	void AddParticle(Particle* part);
 	void InitSystem(int hugeParticles, int largeParticles, int mediumParticles, int smallParticles );
 	void InitSystem();
+	void InitTestSystem();
 
 	Particle* GetParticle(int id);
 	Particle* GetParticlesArray();
