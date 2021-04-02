@@ -14,7 +14,7 @@ struct NodeGPU {
     Vector3 localPosition;
     Particle* particle;
     Particle* particles;
-      
+    bool locked;
 };
 
 class BarnesHutGPU
