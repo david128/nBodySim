@@ -1,34 +1,30 @@
 ﻿#pragma once
-#include "Vector3.h"
+
 #include "Particle.h"
 
-struct NodeGPU {
+#include "NodeGPU.h"
 
-
-    int particleCount;
-    NodeGPU* children[8];
-    Vector3 averagePos;
-    float combinedMass;
-    float sideLegnth;
-    Vector3 position;
-    Vector3 localPosition;
-    Particle* particle;
-    Particle* particles;
-    bool locked;
-};
 
 class BarnesHutGPU
 {
 public:
 
-    void SetExtents(float extents);
-    void ConstructTree();
-    void InseertParticle();
+	void InitRoot(int n,float halfSide);
+	void SetExtents(float extents);
+	void ConstructTree(int n, Particle* pArray);
+	void InseertParticle();
 
 
 private:
 	int threadsPerBlock;
 	int numberOfBlocks;
 
-}
+	int numNodes;
+
+	int* children;
+
+	NodeGPU* root;
+
+};
+
 

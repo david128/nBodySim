@@ -1,6 +1,6 @@
 ﻿#include "Direct.cuh"
-
 #include "implementKernel.cuh"
+
 
 
 
@@ -12,13 +12,13 @@ void DirectGPU::InitDevice(int n)
 }
 
 
-void DirectGPU::AllPairsEuler(int n , Particle* particles)
+void DirectGPU::AllPairsEuler(int n , Particle* particles, float timeStep)
 {
 	
 
 
 
-	AllPairs << <threadsPerBlock, numberOfBlocks >> > (n, particles, 0.1f);
+	AllPairs << <threadsPerBlock, numberOfBlocks >> > (n, particles, timeStep);
 
 	cudaDeviceSynchronize();
 

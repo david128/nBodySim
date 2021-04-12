@@ -1,8 +1,10 @@
 #include "ParticleManager.h"
 #include <time.h> 
-
 #include "cuda_runtime.h"
 #include "cuda.h"
+
+//#include "cuda_runtime.h"
+//#include "cuda.h"
 
 
 ParticleManager::ParticleManager(Vector3 extents, float g, int numberOfParticles)
@@ -12,13 +14,18 @@ ParticleManager::ParticleManager(Vector3 extents, float g, int numberOfParticles
 	negSystemExtents.scale(-1.0f);
 	direct = new DirectSolver(g);
 	barnesHut = new BHTree(extents.x*10.0f, g);
+	parallelBarnesHut = new BarnesHutGPU();
+	directGPU = new DirectGPU();
 
 	n = numberOfParticles;
 
 	int bytes = n * sizeof(Particle);
 
 	cudaMallocManaged(&particlesArray, bytes);
+	
 
+	directGPU->InitDevice(n);
+	parallelBarnesHut->InitRoot(n, extents.x * 10.0f);
 }
 
 Particle* ParticleManager::CreateRandomParticle()
@@ -61,11 +68,11 @@ Particle* ParticleManager::GetParticlesArray()
 void ParticleManager::Update(float dt, float timeStep)
 {
 
-	if (direct->Update(dt, 0.5f))
-	{
-		direct->SolveEuler(dt, particlesArray, timeStep, n);
-		UpdateAllParticles(timeStep);
-	}
+	//if (direct->Update(dt, 0.5f))
+	//{
+	//	direct->SolveEuler(dt, particlesArray, timeStep, n);
+	//	UpdateAllParticles(timeStep);
+	//}
 
 	//if (direct->Update(dt, 0.5f))
 	//{
@@ -96,6 +103,14 @@ void ParticleManager::Update(float dt, float timeStep)
 	//	UpdateAllParticles(timeStep);
 	//}
 
+	if (direct->Update(dt, timeStep))
+	{
+		//directGPU->AllPairsEuler(n, particlesArray, timeStep);
+		//UpdateAllParticles(timeStep);
+		parallelBarnesHut->ConstructTree(n, particlesArray);
+	}
+	//
+	
 }
 
 void ParticleManager::UpdateAllParticles(float timeStep)

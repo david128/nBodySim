@@ -80,10 +80,17 @@
     <ClInclude Include="DirectSolver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BH.cuh" />
     <ClInclude Include="implementKernel.cuh" />
+    <ClInclude Include="BarnesHut.cuh" />
+    <ClInclude Include="Direct.cuh" />
+    <ClInclude Include="NodeGPU.cuh" />
+    <ClInclude Include="NodeGPU.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="BH.cu" />
+    <CudaCompile Include="BarnesHut.cu" />
+    <CudaCompile Include="Direct.cu" />
+    <CudaCompile Include="implementKernel.cu" />
   </ItemGroup>
 </Project>

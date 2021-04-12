@@ -1,7 +1,8 @@
 ﻿
 #pragma once
 #include "Particle.h"
-#include <vector>
+
+
 
 
 class DirectGPU 
@@ -9,7 +10,7 @@ class DirectGPU
 public:
 
 	void InitDevice(int n);	
-	void AllPairsEuler(int n, Particle*  particles);
+	void AllPairsEuler(int n, Particle* particles, float timeStep);
 
 
 private:
