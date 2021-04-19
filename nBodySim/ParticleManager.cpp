@@ -19,6 +19,8 @@ ParticleManager::ParticleManager(Vector3 extents, float g, int numberOfParticles
 
 	cudaMallocManaged(&particlesArray, bytes);
 
+	solver = new EulerSolver(g);
+
 }
 
 Particle* ParticleManager::CreateRandomParticle()
@@ -101,8 +103,14 @@ void ParticleManager::Update(float dt, float timeStep)
 
 
 	//if (direct->Update(dt, timeStep))
+	//{
+	//	direct->SolveRK4(dt, particlesArray, 0.1, n);
+	//	UpdateAllParticles(timeStep);
+	//}
+
+	if (solver->Update(dt, timeStep))
 	{
-		direct->SolveRK4(dt, particlesArray, 0.1, n);
+		solver->Solve(particlesArray, 0.1, n);
 		UpdateAllParticles(timeStep);
 	}
 

@@ -5,6 +5,8 @@
 #include "DirectSolver.h"
 #include "BHTree.h"
 #include "BH.cuh"
+#include "RK4Solver.h"
+#include "EulerSolver.h"
 
 class ParticleManager
 {
@@ -31,6 +33,8 @@ public:
 
 	int n;
 private:
+
+	Solver* solver;
 
 	Vector3 posSystemExtents;
 	Vector3 negSystemExtents;
