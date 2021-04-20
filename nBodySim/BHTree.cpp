@@ -1,66 +1,39 @@
 #include "BHTree.h"
 
 
-BHTree::BHTree(float halfSide , float gravConst)
+BHTree::BHTree(float halfSide , float gravConst,float th)
 {
 	
 	root.position = Vector3(halfSide, halfSide, halfSide);
 	maxPos = halfSide;
 	root.sideLegnth = halfSide * 2.0f;;
 
-	time = 0.0f;
 	g = gravConst;
+	theta = th;
+
 }
 
 BHTree::~BHTree()
 {
 }
 
-bool BHTree::Update(float dt, float timeStep)
-{
-	time += dt;
 
-	if (time >= timeStep)
+
+void BHTree::ConstructTree (Particle* particles, int n)
+{
+	for (int i = 0; i < n; i++)
 	{
-		time = 0.0f;//reset time
-		return true; //return true so we now solve
-
+		root.particles.push_back(&particles[i]);
 	}
-	return false;
-}
 
-void BHTree::ConstructTree (std::vector<Particle*>* particles)
-{
-
-	root.particles = *particles;
-	root.particleCount = particles->size();
-	if (particles->size() > 1)
+	root.particleCount = n;
+	if (n > 1)
 	{
 		SplitNode(&root);
 	}
 	
 }
 
-void BHTree::ConstructTreeInP(std::vector<Particle*>* particles)
-{
-	//split node into 8 but do not recursively split further
-
-	//in parrallel further split each node
-
-	
-	root.particles = *particles;
-	root.particleCount = particles->size();
-	if (particles->size() > 1)
-	{
-		//SplitOnce();
-
-	}
-
-	for (int i = 0; i < 8; i++)
-	{
-		//SplitNodeInP<<<i, 1, >>>(&root);
-	}
-}
 
 void BHTree::DeleteTree()
 {
@@ -71,15 +44,15 @@ void BHTree::DeleteTree()
 	
 }
 
-void BHTree::CalculateForces(float theta, std::vector<Particle*>* particles, float timeStep)
+void BHTree::CalculateForces(Particle* particles, int n, float timeStep)
 {
 
-	for (int i = 0; i < particles->size(); i++) //for all particles find forces applied
+	for (int i = 0; i < n; i++) //for all particles find forces applied
 	{
-		TraversNode(particles->at(i), theta,&root, timeStep);//start at root
-		Vector3 vDt = particles->at(i)->velocity;
+		TraversNode(&particles[i], theta,&root, timeStep);//start at root
+		Vector3 vDt = particles[i].velocity;
 		vDt.scale(timeStep);
-		particles->at(i)->nextPosition = particles->at(i)->position + vDt;
+		particles[i].nextPosition = particles[i].position + vDt;
 	}
 
 }
@@ -92,7 +65,7 @@ void BHTree::TraversNode(Particle* particle, float theta, Node* currentNode, flo
 		{
 			if (node->particleCount == 1) //external node we can use nodes avgs because these are values from the one single particle
 			{
-				if (node->particle != particle) //do not calculate force of particle on self
+				if (node->particles[0] != particle) //do not calculate force of particle on self
 				{
 					CalculateForce(particle, node->averagePos, node->combinedMass, timeStep);
 				}
@@ -132,31 +105,14 @@ void BHTree::CalculateForce(Particle* particle, Vector3 acm, float cm, float tim
 	
 }
 
-void BHTree::DrawDebug()
+void BHTree::Solve(Particle* particles, float timeStep, int n)
 {
-
-	DrawLines(&root);
+	DeleteTree();
+	ConstructTree(particles, n);
+	CalculateForces(particles,n, timeStep);
+	
 
 }
-
-void BHTree::DrawLines(Node* node)
-{
-
-
-	glBegin(GL_LINES);
-
-	glVertex3f(-10000, 10000, 0);
-	glVertex3f(10000, 10000, 0);
-	glVertex3f(10000, -10000, 0);
-	glVertex3f(-10000, 10000, 0);
-
-
-	glEnd();
-
-}
-
-
-
 
 void BHTree::SplitNode(Node* currentNode)
 {
@@ -183,12 +139,12 @@ void BHTree::SplitNode(Node* currentNode)
 	for (int i = 0; i < currentNode->particleCount; i++)
 	{
 		bool inside = true; // if particle is not inside extents of root then do not recursively split it.
-		if (abs(currentNode->particles[i]->position.x) > root.sideLegnth*0.5f || abs(currentNode->particles[i]->position.y) > root.sideLegnth * 0.5f || abs(currentNode->particles[i]->position.z) > root.sideLegnth * 0.5f)
+		if (abs(currentNode->particles.at(i)->position.x) > root.sideLegnth*0.5f || abs(currentNode->particles.at(i)->position.y) > root.sideLegnth * 0.5f || abs(currentNode->particles.at(i)->position.z) > root.sideLegnth * 0.5f)
 		{
 			inside = false; //if not inside extents, set inside to false
 		}
 		//pos -centre point to find if coordinates are - or + directions from centre
-		Vector3 dir = currentNode->particles[i]->position - parentCentre;
+		Vector3 dir = currentNode->particles.at(i)->position - parentCentre;
 
 		if (inside) //only place particle if inside extents(otherwise will not correctly place, and will inifinitely run until out of memory crash.
 		{
@@ -200,8 +156,10 @@ void BHTree::SplitNode(Node* currentNode)
 			{
 				if (dir.equals(currentNode->children[j]->localPosition))
 				{
-					currentNode->children[j]->particles.push_back(currentNode->particles[i]);
 					currentNode->children[j]->particleCount++;
+					currentNode->children[j]->particles.push_back(currentNode->particles[i]);
+					//currentNode->children[j]->particles[currentNode->children[j]->particleCount -1] = &currentNode->particles[i]; //add this particle to child
+
 					placed = true;
 				}
 				j++;
@@ -224,17 +182,16 @@ void BHTree::SplitNode(Node* currentNode)
 			}
 			else if (currentNode->children[i]->particleCount == 1)
 			{
-				currentNode->children[i]->particle = currentNode->children[i]->particles[0];
-				currentNode->children[i]->combinedMass = currentNode->children[i]->particle->mass;
-				currentNode->children[i]->averagePos = currentNode->children[i]->particle->position;
+				currentNode->children[i]->combinedMass = currentNode->children[i]->particles.at(0)->mass;
+				currentNode->children[i]->averagePos = currentNode->children[i]->particles.at(0)->position;
 			}
 			else
 			{
 				//sum masses and positions
 				for (int j = 0; j < currentNode->children[i]->particleCount; j++)
 				{
-					currentNode->children[i]->combinedMass += currentNode->children[i]->particles[j]->mass;
-					currentNode->children[i]->averagePos += currentNode->children[i]->particles[j]->position;
+					currentNode->children[i]->combinedMass += currentNode->children[i]->particles.at(j)->mass;
+					currentNode->children[i]->averagePos += currentNode->children[i]->particles.at(j)->position;
 				}
 				//find average
 				currentNode->children[i]->averagePos.scale(1.0f / (float)currentNode->children[i]->particleCount);
@@ -246,8 +203,6 @@ void BHTree::SplitNode(Node* currentNode)
 	}
 	
 }
-
-
 
 
 void BHTree::DeleteNode(Node* currentNode)

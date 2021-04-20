@@ -11,7 +11,7 @@ ParticleManager::ParticleManager(Vector3 extents, float g, int numberOfParticles
 	negSystemExtents = extents;
 	negSystemExtents.scale(-1.0f);
 	direct = new DirectSolver(g);
-	barnesHut = new BHTree(extents.x*10.0f, g);
+	barnesHut = new BHTree(extents.x*10.0f, g, 0.5f);
 
 	n = numberOfParticles;
 
@@ -20,6 +20,7 @@ ParticleManager::ParticleManager(Vector3 extents, float g, int numberOfParticles
 	cudaMallocManaged(&particlesArray, bytes);
 
 	solver = new EulerSolver(g);
+	solver = barnesHut;
 
 }
 

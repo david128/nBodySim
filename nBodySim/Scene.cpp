@@ -42,8 +42,8 @@ Scene::Scene(Input *inp)
 	//particles.push_back(particle3);
 	//particles.push_back(particle4);
 
-	particleManager = new ParticleManager(Vector3(10000.0f, 10000.0f, 10000.0f), g, 2);
-	particleManager->InitTestSystem();
+	particleManager = new ParticleManager(Vector3(10000.0f, 10000.0f, 10000.0f), g, 100);
+	particleManager->InitSystem();
 
 	Particle* p1 = new Particle(10, Vector3(0.0f, 0.0f, 0.0f), 60000000000000, Vector3(0.0f, 0.0f, 0.0f));
 	Particle* p2 = new Particle(5, Vector3(0.0f, 35.0f, 0.0f), 50, Vector3(10.5f, 0.0f, 0.0f));
@@ -85,9 +85,9 @@ void Scene::InitCamera()
 	camera = new Camera();
 	camera->setXzAngle(90.0f);
 	camera->setCameraLook(Vector3(0.0f, 0.0f, 0.0f));
-	camera->setCameraPos(Vector3(0.0f, 0.0f, 500.0f));
+	camera->setCameraPos(Vector3(0.0f, 0.0f, 25000.0f));
 	camera->setCameraUp(Vector3(0, 1, 0));
-	camera->SetDistanceToLook(500.0f);
+	camera->SetDistanceToLook(25000.0f);
 
 }
 
