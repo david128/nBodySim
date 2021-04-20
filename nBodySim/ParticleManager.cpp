@@ -13,6 +13,7 @@ ParticleManager::ParticleManager(Vector3 extents, float g, int numberOfParticles
 	direct = new DirectSolver(g);
 	barnesHut = new BHTree(extents.x*10.0f, g, 0.5f);
 
+	grav = g;
 	n = numberOfParticles;
 
 	int bytes = n * sizeof(Particle);
@@ -20,7 +21,7 @@ ParticleManager::ParticleManager(Vector3 extents, float g, int numberOfParticles
 	cudaMallocManaged(&particlesArray, bytes);
 
 	solver = new EulerSolver(g);
-	solver = barnesHut;
+	//solver = barnesHut;
 
 }
 
@@ -66,6 +67,30 @@ void ParticleManager::InitTestSystem()
 
 }
 
+void ParticleManager::InitDiskSystem(float minR,float maxR, float height)
+{
+	Particle* newP; 
+	float largeMass = 100000.0;
+	float smallMass = 1;
+	newP = new Particle(100, Vector3(0.0f, 0.0f, 0.0f),largeMass, Vector3(0.0f, 0.0f, 0.0f));
+	particlesArray[0] = *newP;
+
+	for (int i = 1; i < n; i++)
+	{
+
+		//theta = random?
+		float theta = FindRandomSize(0, 360);
+		//random radius
+		float r = FindRandomSize(minR,maxR);
+		float h = FindRandomSize(-height,height);
+		float v = smallMass * sqrt((grav * largeMass) / r);
+
+		newP = new Particle(50, Vector3(r*cosf(theta), r * sinf(theta),height), smallMass = 10, Vector3(v*sinf(theta), -v*cosf(theta), 0.0f));
+		particlesArray[i] = *newP;
+
+	}
+}
+
 Particle* ParticleManager::GetParticlesArray()
 {
 	return particlesArray;
@@ -109,9 +134,9 @@ void ParticleManager::Update(float dt, float timeStep)
 	//	UpdateAllParticles(timeStep);
 	//}
 
-	if (solver->Update(dt, timeStep))
+	//if (solver->Update(dt, timeStep))
 	{
-		solver->Solve(particlesArray, 0.1, n);
+		solver->Solve(particlesArray, 0.5, n);
 		UpdateAllParticles(timeStep);
 	}
 

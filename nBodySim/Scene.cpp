@@ -43,7 +43,8 @@ Scene::Scene(Input *inp)
 	//particles.push_back(particle4);
 
 	particleManager = new ParticleManager(Vector3(10000.0f, 10000.0f, 10000.0f), g, 100);
-	particleManager->InitSystem();
+	//particleManager->InitSystem();
+	particleManager->InitDiskSystem(3000,5000,100);
 
 	Particle* p1 = new Particle(10, Vector3(0.0f, 0.0f, 0.0f), 60000000000000, Vector3(0.0f, 0.0f, 0.0f));
 	Particle* p2 = new Particle(5, Vector3(0.0f, 35.0f, 0.0f), 50, Vector3(10.5f, 0.0f, 0.0f));

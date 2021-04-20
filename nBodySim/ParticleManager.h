@@ -18,6 +18,7 @@ public:
 	void InitSystem(int hugeParticles, int largeParticles, int mediumParticles, int smallParticles );
 	void InitSystem();
 	void InitTestSystem();
+	void InitDiskSystem(float minR, float maxR, float height);
 
 	Particle* GetParticle(int id);
 	Particle* GetParticlesArray();
@@ -34,6 +35,7 @@ public:
 	int n;
 private:
 
+	float grav;
 	Solver* solver;
 
 	Vector3 posSystemExtents;
