@@ -24,16 +24,16 @@ void RK4Solver::Solve(Particle* particles, float timeStep, int n)
 	//k1
 	for (int i = 0; i < n; i++)
 	{
-		
+		//kx1 = h *v(n)
+		kx1[i] = particles[i].velocity;
+		kx1[i].scale(timeStep);
+
 		//loop all particles 
 		for (int j = 0; j < n; j++)
 		{
 			//if j and i are not same particle then calc j gravitational effect on i
 			if (j != i)
 			{
-				//kx1 = h *v(n)
-				kx1[i] = particles[i].velocity;
-				kx1[i].scale(timeStep);
 
 				//kv1 = h*(x(n) - x[j](n)) * (g * m[j] / |x(n) - x[j](n)|^3)
 				acc = CalculateAcceleration(particles[i].position, particles[j].position, particles[j].mass);
@@ -48,20 +48,18 @@ void RK4Solver::Solve(Particle* particles, float timeStep, int n)
 	//k2
 	for (int i = 0; i < n; i++)
 	{
+		//kx2 = h*(v(n) +kv1/2)	
+		kx2[i] = kv1[i];
+		kx2[i].scale(0.5f);
+		kx2[i] = particles[i].velocity + kx2[i];
+		kx2[i].scale(timeStep);
+
 		//loop all particles 
 		for (int j = 0; j < n; j++)
 		{
 			//if j and i are not same particle then calc j gravitational effect on i
 			if (j != i)
 			{
-				//kx2 = h*(v(n) +kv1/2)	
-				kx2[i] = kv1[i];
-				kx2[i].scale(0.5f);
-				kx2[i] = particles[i].velocity + kx2[i];
-				kx2[i].scale(timeStep);
-
-
-
 				//kv2 = h * ((x(n) + kx1/2) - x[j](n)) * (g * m[j] / |(x(n) + kx1/2) - x[j](n) | ^ 3)
 				tempJ = kx1[j];
 				tempJ.scale(0.5f);
@@ -81,17 +79,19 @@ void RK4Solver::Solve(Particle* particles, float timeStep, int n)
 	//k3
 	for (int i = 0; i < n; i++)
 	{
+
+		//kx3 = h*(v(n) +kv2/2)	
+		kx3[i] = kv2[i];
+		kx3[i].scale(0.5f);
+		kx3[i] = particles[i].velocity + kx3[i];
+		kx3[i].scale(timeStep);
+
 		//loop all particles 
 		for (int j = 0; j < n; j++)
 		{
 			//if j and i are not same particle then calc j gravitational effect on i
 			if (j != i)
 			{
-				//kx3 = h*(v(n) +kv2/2)	
-				kx3[i] = kv2[i];
-				kx3[i].scale(0.5f);
-				kx3[i] = particles[i].velocity + kx3[i];
-				kx3[i].scale(timeStep);
 
 				//kv3 = h * ((x(n) + kx2/2) - x[j](n)) * (g * m[j] / |(x(n) + kx2/2) - x[j](n) | ^ 3)
 				tempI = kx2[i];
@@ -113,15 +113,17 @@ void RK4Solver::Solve(Particle* particles, float timeStep, int n)
 	//k4
 	for (int i = 0; i < n; i++)
 	{
+
+		//kx4 = h*(v(n) +kv3)	
+		kx4[i] = particles[i].velocity + kx3[i];
+		kx4[i].scale(timeStep);
+
 		//loop all particles 
 		for (int j = 0; j < n; j++)
 		{
 			//if j and i are not same particle then calc j gravitational effect on i
 			if (j != i)
 			{
-				//kx4 = h*(v(n) +kv3)	
-				kx4[i] = particles[i].velocity + kx3[i];
-				kx4[i].scale(timeStep);
 
 				//kv2 = h * ((x(n) + kx3) - x[j](n)) * (g * m[j] / |(x(n) + kx3) - x[j](n) | ^ 3)
 				acc = CalculateAcceleration(particles[i].position + kx3[i], particles[j].position + kx3[j], particles[j].mass);
