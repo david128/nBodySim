@@ -187,6 +187,7 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Solver.cpp" />
     <ClCompile Include="Vector3.cpp" />
+    <ClCompile Include="VerletSolver.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BH.cuh">
@@ -212,6 +213,7 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Solver.h" />
     <ClInclude Include="Vector3.h" />
+    <ClInclude Include="VerletSolver.h" />
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="BH.cu">

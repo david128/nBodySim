@@ -7,6 +7,7 @@
 #include "BH.cuh"
 #include "RK4Solver.h"
 #include "EulerSolver.h"
+#include "VerletSolver.h"
 
 class ParticleManager
 {
