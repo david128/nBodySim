@@ -59,6 +59,7 @@ void BHTree::CalculateForces(Particle* particles, int n, float timeStep)
 
 void BHTree::TraversNode(Particle* particle, float theta, Node* currentNode, float timeStep)
 {
+	Vector3 vdt;
 	for (auto node : currentNode->children)
 	{
 		if (node != NULL)//if empty node then we can skip as not particles to calculate force of
@@ -67,7 +68,9 @@ void BHTree::TraversNode(Particle* particle, float theta, Node* currentNode, flo
 			{
 				if (node->particles[0] != particle) //do not calculate force of particle on self
 				{
-					CalculateForce(particle, node->averagePos, node->combinedMass, timeStep);
+					vdt =CalculateAcceleration(particle->position, node->averagePos, node->combinedMass);
+					vdt.scale(timeStep);
+					particle->velocity += vdt;
 				}
 				
 			}
@@ -77,8 +80,10 @@ void BHTree::TraversNode(Particle* particle, float theta, Node* currentNode, flo
 				float dist = diff.length();//get distance between points
 				if ((node->sideLegnth / dist) < theta)
 				{
-
-					CalculateForce(particle, node->averagePos, node->combinedMass, timeStep); //suitably far so can use avg mass and CoM
+				
+					vdt = CalculateAcceleration(particle->position, node->averagePos, node->combinedMass);
+					vdt.scale(timeStep);
+					particle->velocity += vdt;
 				}
 				else
 				{
@@ -91,19 +96,7 @@ void BHTree::TraversNode(Particle* particle, float theta, Node* currentNode, flo
 	}
 }
 
-void BHTree::CalculateForce(Particle* particle, Vector3 acm, float cm, float timeStep ) //using euler method
-{
-	Vector3 diff = particle->position - acm;
-	float dist = diff.length(); //get distance
 
-	float mult = (g * cm) / (dist * dist * dist); //multiplier  (g * mass )/ (distance ^3)
-
-	Vector3 multDiff = Vector3(mult * diff.getX(), mult * diff.getY(), mult * diff.getZ()); //multiply  vector by multiplier to get force
-	multDiff.scale(timeStep);
-	particle->velocity = particle->velocity - multDiff; //new V = old v + acceleration due to gravity
-	
-	
-}
 
 void BHTree::Solve(Particle* particles, float timeStep, int n)
 {

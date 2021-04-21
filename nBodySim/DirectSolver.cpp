@@ -1,11 +1,11 @@
 #include "DirectSolver.h"
 
 
-Vector3 DirectSolver::CalculateAcceleration(Vector3 posI, Particle* pJ)
+Vector3 DirectSolver::CalculateAcceleration(Vector3 posI, Vector3 posJ, float mass)
 {
-	Vector3 diff = posI - pJ->position;
+	Vector3 diff = posI - posJ;
 	float dist = diff.length(); //get distance
-	float multiplier = (g * pJ->mass) / (dist * dist * dist); //multiplier  (g * mass )/ (distance ^3)
+	float multiplier = (g * mass) / (dist * dist * dist); //multiplier  (g * mass )/ (distance ^3)
 	Vector3 acc = diff;
 	acc.scale(-multiplier); //return as negative as gravitational effect in negative
 	return acc;
@@ -49,7 +49,7 @@ void DirectSolver::SolveEuler(float dt, Particle* particles, float timeStep, int
 			//if j and i are not same particle then calc j gravitational effect on i
 			if (j != i)
 			{
-				acc = acc + CalculateAcceleration(particles[i].position, &particles[j]);
+				acc = acc + CalculateAcceleration(particles[i].position, particles[j].position, particles[j].mass);
 			}
 		}
 
@@ -168,7 +168,7 @@ void DirectSolver::SolveRK4(float dt, Particle* particles, float timeStep, int n
 				kx1[i].scale(timeStep);
 
 				//kv1 = h*(x(n) - x[j](n)) * (g * m[j] / |x(n) - x[j](n)|^3)
-				kv1[i] = CalculateAcceleration(particles[i].position, &particles[j]);
+				kv1[i] = CalculateAcceleration(particles[i].position, particles[j].position, particles[j].mass);
 				kv1[i].scale(timeStep);
 			}
 
@@ -194,7 +194,7 @@ void DirectSolver::SolveRK4(float dt, Particle* particles, float timeStep, int n
 				kv2[i] = kx1[i];
 				kv2[i].scale(0.5f);
 				kv2[i] = particles[i].position + kv2[i];
-				kv2[i] = CalculateAcceleration(kv2[i], &particles[j]);
+				kv2[i] = CalculateAcceleration(kv2[i], particles[j].position, particles[j].mass);
 				kv2[i].scale(timeStep);
 			}
 
@@ -220,7 +220,7 @@ void DirectSolver::SolveRK4(float dt, Particle* particles, float timeStep, int n
 				kv3[i] = kx2[i];
 				kv3[i].scale(0.5f);
 				kv3[i] = particles[i].position + kv3[i];
-				kv3[i] = CalculateAcceleration(kv3[i], &particles[j]);
+				kv3[i] = CalculateAcceleration(kv3[i], particles[j].position, particles[j].mass);
 				kv3[i].scale(timeStep);
 			}
 
@@ -243,7 +243,7 @@ void DirectSolver::SolveRK4(float dt, Particle* particles, float timeStep, int n
 
 				//kv2 = h * ((x(n) + kx3) - x[j](n)) * (g * m[j] / |(x(n) + kx3) - x[j](n) | ^ 3)
 				kv4[i] = particles[i].position + kx3[i];
-				kv4[i] = CalculateAcceleration(kv4[i], &particles[j]);
+				kv4[i] = CalculateAcceleration(kv4[i], particles[j].position, particles[j].mass);
 				kv4[i].scale(timeStep);
 			}
 
@@ -305,7 +305,7 @@ void DirectSolver::SolveVerlet(float dt, Particle* particles, float timeStep, in
 			if (j != i)
 			{
 				//sum accelerations
-				acc = acc + CalculateAcceleration(particles[i].position, &particles[j]);
+				acc = acc + CalculateAcceleration(particles[i].position, particles[j].position, particles[j].mass);
 			}
 
 		}

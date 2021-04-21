@@ -20,7 +20,7 @@ void EulerSolver::Solve(Particle* particles, float timeStep, int n)
 			//if j and i are not same particle then calc j gravitational effect on i
 			if (j != i)
 			{
-				acc = acc + CalculateAcceleration(particles[i].position, &particles[j]);
+				acc = acc + CalculateAcceleration(particles[i].position, particles[j].position, particles[j].mass);
 			}
 		}
 

@@ -20,8 +20,8 @@ ParticleManager::ParticleManager(Vector3 extents, float g, int numberOfParticles
 
 	cudaMallocManaged(&particlesArray, bytes);
 
-	solver = new EulerSolver(g);
-	//solver = barnesHut;
+	solver = new RK4Solver(g);
+	solver = barnesHut;
 
 }
 

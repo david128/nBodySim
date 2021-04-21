@@ -19,10 +19,12 @@ void RK4Solver::Solve(Particle* particles, float timeStep, int n)
 	kv3.resize(n);
 	kv4.resize(n);
 
+	Vector3 tempI, tempJ, acc;
 
 	//k1
 	for (int i = 0; i < n; i++)
 	{
+		
 		//loop all particles 
 		for (int j = 0; j < n; j++)
 		{
@@ -34,8 +36,10 @@ void RK4Solver::Solve(Particle* particles, float timeStep, int n)
 				kx1[i].scale(timeStep);
 
 				//kv1 = h*(x(n) - x[j](n)) * (g * m[j] / |x(n) - x[j](n)|^3)
-				kv1[i] = CalculateAcceleration(particles[i].position, &particles[j]);
-				kv1[i].scale(timeStep);
+				acc = CalculateAcceleration(particles[i].position, particles[j].position, particles[j].mass);
+				acc.scale(timeStep);
+
+				kv1[i] += acc;
 			}
 
 		}
@@ -56,12 +60,19 @@ void RK4Solver::Solve(Particle* particles, float timeStep, int n)
 				kx2[i] = particles[i].velocity + kx2[i];
 				kx2[i].scale(timeStep);
 
+
+
 				//kv2 = h * ((x(n) + kx1/2) - x[j](n)) * (g * m[j] / |(x(n) + kx1/2) - x[j](n) | ^ 3)
-				kv2[i] = kx1[i];
-				kv2[i].scale(0.5f);
-				kv2[i] = particles[i].position + kv2[i];
-				kv2[i] = CalculateAcceleration(kv2[i], &particles[j]);
-				kv2[i].scale(timeStep);
+				tempJ = kx1[j];
+				tempJ.scale(0.5f);
+
+				tempI = kx1[i];
+				tempI.scale(0.5f);
+
+				acc = CalculateAcceleration(particles[i].position + tempI, particles[j].position + tempJ, particles[j].mass );
+				acc.scale(timeStep);
+
+				kv2[i] += acc;
 			}
 
 		}
@@ -83,11 +94,16 @@ void RK4Solver::Solve(Particle* particles, float timeStep, int n)
 				kx3[i].scale(timeStep);
 
 				//kv3 = h * ((x(n) + kx2/2) - x[j](n)) * (g * m[j] / |(x(n) + kx2/2) - x[j](n) | ^ 3)
-				kv3[i] = kx2[i];
-				kv3[i].scale(0.5f);
-				kv3[i] = particles[i].position + kv3[i];
-				kv3[i] = CalculateAcceleration(kv3[i], &particles[j]);
-				kv3[i].scale(timeStep);
+				tempI = kx1[i];
+				tempI.scale(0.5f);
+
+				tempJ = kx1[j];
+				tempJ.scale(0.5f);
+								
+				acc = CalculateAcceleration(particles[i].position + tempI, particles[j].position + tempJ, particles[j].mass);
+				acc.scale(timeStep);
+
+				kv3[i] += acc;
 			}
 
 		}
@@ -108,9 +124,10 @@ void RK4Solver::Solve(Particle* particles, float timeStep, int n)
 				kx4[i].scale(timeStep);
 
 				//kv2 = h * ((x(n) + kx3) - x[j](n)) * (g * m[j] / |(x(n) + kx3) - x[j](n) | ^ 3)
-				kv4[i] = particles[i].position + kx3[i];
-				kv4[i] = CalculateAcceleration(kv4[i], &particles[j]);
-				kv4[i].scale(timeStep);
+				acc = CalculateAcceleration(particles[i].position + kx3[i], particles[j].position + kx3[j], particles[j].mass);
+				acc.scale(timeStep);
+
+				kv4[i] += acc;
 			}
 
 		}

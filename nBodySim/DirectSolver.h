@@ -10,7 +10,7 @@ private:
 
 	float time;
 	float g;
-	Vector3 CalculateAcceleration(Vector3 posI, Particle* pJ);
+	Vector3 CalculateAcceleration(Vector3 posI, Vector3 posJ, float mass);
 
 	
 public:
