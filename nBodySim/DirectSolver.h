@@ -10,7 +10,9 @@ private:
 
 	float time;
 	float g;
-	Vector3 CalculateAcceleration(Vector3 posI, Particle* pB);
+	Vector3 CalculateAcceleration(Vector3 posI, Vector3 posJ, float mass);
+
+	
 public:
 
 	DirectSolver(float gravConst);
@@ -18,6 +20,6 @@ public:
 	void SolveEuler(float dt, Particle* particles, float timeStep, int n);
 	void SolveRK4(float dt, Particle* particles, float timeStep, int n);
 	void SolveVerlet(float dt, Particle* particles, float timeStep, int n);
-
+	
 };
 

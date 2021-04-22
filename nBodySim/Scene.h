@@ -13,6 +13,15 @@
 
 #include <vector>
 
+
+enum METHOD
+{
+	BH,
+	EULER,
+	RK4,
+	VERLET
+};
+
 class Scene
 {
 	

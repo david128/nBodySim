@@ -2,6 +2,7 @@
 #include <vector>
 #include "Vector3.h"
 #include "Particle.h"
+#include "Solver.h"
 
 
 struct Node {
@@ -15,38 +16,36 @@ struct Node {
     float sideLegnth;
     Vector3 position;
     Vector3 localPosition;
-    Particle* particle;
     std::vector<Particle*> particles;
+    Particle* particle;
    
     void FindLocalPosition(int i, Vector3 parentCentre);
 };
 
-class BHTree
+class BHTree: 
+    public Solver
 {
 public:
 
-    BHTree(float side, float gravConst);
+    BHTree(float side, float gravConst,float th);
     ~BHTree();
 
-    bool Update(float dt, float timeStep);
 
-    virtual void ConstructTree(std::vector<Particle*>* particles);
-    void ConstructTreeInP(std::vector<Particle*>* particles);
+    void ConstructTree(Particle* particles, int n);
     void SplitNode(Node* currentNode);
     void DeleteNode(Node* currentNode);
     void DeleteTree();
-    void CalculateForces(float theta, std::vector<Particle*>* particles, float timeStep);
+    void CalculateForces(Particle* particles, int n, float timeStep);
     void TraversNode(Particle* particle, float theta, Node* node, float timeStep);
-    void CalculateForce(Particle* particle, Vector3 acm, float am, float timeStep);
-    void DrawDebug();
-    void DrawLines(Node* node);
+ 
+
+    void Solve(Particle* particles, float timeStep, int n);
 
 protected:
 
+    float theta;
     Node root;
     Vector3 extents;
-    float g;
-    float time;
     float maxPos;
 };
 

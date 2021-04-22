@@ -4,8 +4,15 @@
 #include "Vector3.h"
 #include "DirectSolver.h"
 #include "BHTree.h"
+
 #include "Direct.cuh"
 #include "BarnesHut.cuh"
+
+#include "BH.cuh"
+#include "RK4Solver.h"
+#include "EulerSolver.h"
+#include "VerletSolver.h"
+
 
 class ParticleManager
 {
@@ -16,6 +23,8 @@ public:
 	void AddParticle(Particle* part);
 	void InitSystem(int hugeParticles, int largeParticles, int mediumParticles, int smallParticles );
 	void InitSystem();
+	void InitTestSystem();
+	void InitDiskSystem(float minR, float maxR, float height);
 
 	Particle* GetParticle(int id);
 	Particle* GetParticlesArray();
@@ -32,6 +41,9 @@ public:
 
 	int n;
 private:
+
+	float grav;
+	Solver* solver;
 
 	Vector3 posSystemExtents;
 	Vector3 negSystemExtents;
