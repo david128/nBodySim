@@ -11,7 +11,9 @@
 
 
 __global__
-void AllPairs(unsigned int n, Particle* pArray, float timeStep);
+void EulerAcceleration(unsigned int n, Particle* pArray, float timeStep);
+
+__global__ void EulerPosition(unsigned int n, Particle* pArray, float timeStep);
 
 //__global__ void doFoo();
 

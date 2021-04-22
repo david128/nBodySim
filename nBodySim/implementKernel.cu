@@ -13,7 +13,7 @@ const int MAX_N = 1000;
 
 //n = number of bodies
 __global__
-void AllPairs(unsigned int n, Particle* pArray, float timeStep)
+void EulerAcceleration(unsigned int n, Particle* pArray, float timeStep)
 {
 	int id = blockDim.x * blockIdx.x + threadIdx.x; //id of current thread
 	int stride = blockDim.x * gridDim.x; //used to stride by number of threads
@@ -58,12 +58,25 @@ void AllPairs(unsigned int n, Particle* pArray, float timeStep)
 		pArray[i].velocity.y += acc[1];
 		pArray[i].velocity.z += acc[2];
 
-		float vdt[3] = { pArray[i].velocity.x * timeStep,pArray[i].velocity.y * timeStep,pArray[i].velocity.z * timeStep };
-
-		pArray[i].nextPosition.x = pArray[i].position.x + vdt[0];
-		pArray[i].nextPosition.y = pArray[i].position.y + vdt[1];
-		pArray[i].nextPosition.z = pArray[i].position.z + vdt[2];
 	}
+
+}
+
+__global__ void EulerPosition(unsigned int n, Particle* pArray, float timeStep)
+{
+
+	int id = blockDim.x * blockIdx.x + threadIdx.x; //id of current thread
+	int stride = blockDim.x * gridDim.x; //used to stride by number of threads
+	
+	for (int i = id; i < n; i += stride)
+	{
+		float vdt[3] = { pArray[i].velocity.x * timeStep, pArray[i].velocity.y * timeStep,pArray[i].velocity.z * timeStep };
+		pArray[i].position.x += vdt[0];
+		pArray[i].position.y += vdt[1];
+		pArray[i].position.z += vdt[2];
+	}
+	
+
 
 }
 

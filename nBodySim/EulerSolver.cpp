@@ -27,10 +27,15 @@ void EulerSolver::Solve(Particle* particles, float timeStep, int n)
 		//v(t+1) = v(t) +a(t) *dt
 		acc.scale(timeStep);
 		particles[i].velocity += acc;
+				
+	}
+
+	//update pos with new vel from summed acc
+	for (int i = 0; i < n; i++)
+	{
 		//x(t+1) = x(t) + v(t)*dt
 		Vector3 vDt = particles[i].velocity;
 		vDt.scale(timeStep);
-		particles[i].nextPosition = particles[i].position + vDt;
-
+		particles[i].position += vDt;
 	}
 }

@@ -50,9 +50,7 @@ void BHTree::CalculateForces(Particle* particles, int n, float timeStep)
 	for (int i = 0; i < n; i++) //for all particles find forces applied
 	{
 		TraversNode(&particles[i], theta,&root, timeStep);//start at root
-		Vector3 vDt = particles[i].velocity;
-		vDt.scale(timeStep);
-		particles[i].nextPosition = particles[i].position + vDt;
+
 	}
 
 }
@@ -96,6 +94,17 @@ void BHTree::TraversNode(Particle* particle, float theta, Node* currentNode, flo
 	}
 }
 
+void BHTree::UpdatePositions(Particle* particles, float timeStep, int n)
+{
+	for (int i = 0; i < n; i++)
+	{
+		Vector3 vDt = particles[i].velocity;
+		vDt.scale(timeStep);
+		particles[i].position += vDt;
+	}
+
+}
+
 
 
 void BHTree::Solve(Particle* particles, float timeStep, int n)
@@ -103,7 +112,7 @@ void BHTree::Solve(Particle* particles, float timeStep, int n)
 	DeleteTree();
 	ConstructTree(particles, n);
 	CalculateForces(particles,n, timeStep);
-	
+	UpdatePositions(particles, timeStep, n);
 
 }
 
