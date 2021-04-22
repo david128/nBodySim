@@ -50,5 +50,7 @@ private:
 	Vector3 FindRandomVel(int maxSpeed);
 	float FindVolume(float radius);
 
+	bool first = true;
+
 };
 

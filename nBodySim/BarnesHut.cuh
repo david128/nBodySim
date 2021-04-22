@@ -21,9 +21,16 @@ private:
 
 	int numNodes;
 
+
 	int* children;
+	float* masses;
+	int* counter;
+	float* cmx;
+	float* cmy;
+	float* cmz;
 
 	NodeGPU* root;
+
 
 };
 

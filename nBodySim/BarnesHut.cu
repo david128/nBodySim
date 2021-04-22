@@ -3,6 +3,13 @@
 
 void BarnesHutGPU::InitRoot(int n,float halfSide)
 {
+	
+	threadsPerBlock = 256;
+	if (threadsPerBlock > n)
+	{
+		threadsPerBlock = n;
+	}
+	//numberOfBlocks = (n + threadsPerBlock - 1) / threadsPerBlock;
 
 	cudaDeviceProp deviceProp;
 	cudaGetDeviceProperties(&deviceProp,0);
@@ -25,7 +32,12 @@ void BarnesHutGPU::InitRoot(int n,float halfSide)
 	{
 		worked = false;
 	}
+	cudaMalloc((void**)&counter, sizeof(int) * (numNodes + 1) * 8);
+	cudaMalloc((void**)&masses, sizeof(float) * (numNodes + 1) * 8);
 
+	cudaMalloc((void**)&cmx, sizeof(float) * (numNodes + 1) * 8);
+	cudaMalloc((void**)&cmy, sizeof(float) * (numNodes + 1) * 8);
+	cudaMalloc((void**)&cmz, sizeof(float) * (numNodes + 1) * 8);
 
 
 	root->position = Vector3(halfSide, halfSide, halfSide);
@@ -40,17 +52,22 @@ void BarnesHutGPU::ConstructTree(int n, Particle* pArray)
 	startLevel.maxIndex = 0;
 	startLevel.minIndex = 0;
 	startLevel.treeLevel = 0;
-	
 
 
 	
-	rootKernel << <1, 1 >> > (children, numNodes);
+	rootKernel << <1, 1 >> > (children, masses, numNodes);
 	cudaDeviceSynchronize();
-	clearKernel << <1, 1 >> > (children, numNodes,n);
+	clearKernel << <threadsPerBlock, numberOfBlocks >> > (children, masses, numNodes,n);
 	cudaDeviceSynchronize();
-	buildTreeInsertion << < 1,1 >> > (root, n, pArray, children,numNodes);
+	
+	buildTreeInsertion << <32, 2 >> > (root, n, pArray, children,numNodes);
+	
 	cudaDeviceSynchronize();
 
+	//CalculateForces << <threadsPerBlock, numberOfBlocks >> > (children,counter,masses,cmx,cmy,cmz,numNodes, n, pArray,0.5f,0.5f, root->sideLegnth);
+	//cudaDeviceSynchronize();
+	//IntegrateBH << <threadsPerBlock, numberOfBlocks >> > (n, pArray, 0.5f);
+	cudaDeviceSynchronize();
 	int f = 0;
 	f++;
 

@@ -107,7 +107,12 @@ void ParticleManager::Update(float dt, float timeStep)
 	{
 		//directGPU->AllPairsEuler(n, particlesArray, timeStep);
 		//UpdateAllParticles(timeStep);
+		//parallelBarnesHut->ConstructTree(n, particlesArray);
+	}
+	if (first)
+	{
 		parallelBarnesHut->ConstructTree(n, particlesArray);
+		first = false;
 	}
 	//
 	

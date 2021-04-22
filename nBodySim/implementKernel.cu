@@ -7,6 +7,10 @@
 #include <assert.h>
 
 
+__device__ int bottom;
+
+const int MAX_N = 1000;
+
 //n = number of bodies
 __global__
 void AllPairs(unsigned int n, Particle* pArray, float timeStep)
@@ -64,79 +68,40 @@ void AllPairs(unsigned int n, Particle* pArray, float timeStep)
 }
 
 
-
-//__global__
-//void buildTreeSplit(Level prevLevel, NodeGPU* nodes)
-//{
-//
-//	int threadID = threadIdx.x + blockIdx.x * blockDim.x;  //index of body based on thread 
-//	int stride = blockDim.x * gridDim.x; //stride legnth based on number of threads
-//	int numOfNodes = (prevLevel.treeLevel + 1) * 8;
-//	int nodeIndex = threadID + prevLevel.minIndex;
-//
-//	while (nodeIndex < numOfNodes) 
-//	{
-//		NodeGPU &currentNode= nodes[nodeIndex];
-//		//find direction centre point of current node
-//		float halfSide = currentNode.sideLegnth * 0.5;
-//		//float parentCentreX = currentNode.position.x - halfSide;
-//		//float parentCentreY = currentNode.position.y - halfSide;
-//		//float parentCentreZ = currentNode.position.z - halfSide;
-//
-//		//if (parentCentreX == 0.0f || parentCentreY == 0.0f || parentCentreZ == 0.0f)
-//		//{
-//		//	parentCentreX = 0.01f;//alter to avoid dividing by 0
-//		//	parentCentreY = 0.01f;
-//		//	parentCentreZ = 0.01f;
-//		//}
-//
-//		//create 8 nodes
-//		for (int i = 0; i < 8; i++)
-//		{
-//			currentNode.children[i] = new NodeGPU();
-//
-//		}
-//
-//
-//		
-//		//allocate particles
-//		//end
-//		
-//	}
-//}
-
-__global__ void rootKernel(int* child, int numNodes)
+__global__ void rootKernel(int* child, float* mass, int numNodes)
 {
-	int k = numNodes;
-	k *= 8;
+	int index = numNodes;
 	int f = 0;
+	bottom = numNodes;
+	mass[index] = -1.0f;
+
+	index *= 8;
 	for (int i = 0; i < 8; i++)
 	{
-		child[k + i] = -1;
+		child[index + i] = -1;
 		
-		f = child[k + i];
 
-		int s = f;
 
 	}
 }
 
 
-__global__ void  clearKernel(int* child, int numNodes, int n)
+__global__ void  clearKernel(int* child, float* mass, int numNodes, int n)
 {
-	int k, stride, end;
+	int index, stride, end;
 
 	end = 8 * numNodes;
 	
 	stride = blockDim.x * gridDim.x;
-	k = 0;
+	index = threadIdx.x + blockIdx.x * blockDim.x; ;
 
 
 	// iterate cells and reset to 0;
-	while (k < end) 
+	while (index < end) 
 	{
-		child[k] = -1;
-		k += stride;
+		child[index] = -1;
+		mass[index] = -1.0f;
+		index += stride;
 	}
 }
 
@@ -144,40 +109,55 @@ __global__ void buildTreeInsertion(NodeGPU* root, int n, Particle* pArray, int *
 {
 	int bodyIndex = threadIdx.x + blockIdx.x * blockDim.x;  //index of body based on thread 
 	int stride = blockDim.x * gridDim.x; //stride legnth based on number of threads
-	bool skip = false;
+	int skip;
 	int currentChild;
-	int temp = 0;
+	int temp;
 	int depth;
 	int locked;
 	int patch;
-	bool success = false;
+	bool success;
 
 	float nodeX;
 	float nodeY;
 	float nodeZ;
 	float dx, dy, dz;
 	float childHalfSide;
-	int childIndex = 0;
+	int childIndex;
 	int cell;
-	int bottom = numNodes;
+	
 	float bx, by, bz;
 	float rootHalfSide = root->sideLegnth * 0.5f;
-	float rootCx = root->position.x - rootHalfSide;
-	float rootCy = root->position.y - rootHalfSide;
-	float rootCz = root->position.z - rootHalfSide;
+	float rootCx = 0.0f ;
+	float rootCy = 0.0f ;
+	float rootCz = 0.0f ;
+
+
+	int times = 0;
+	bool b;
+
+	skip = 1;
+	success = false;
 
 	while (bodyIndex < n)
 	{
 
-		if (!skip)//new body 
+		times++;
+		if (times > 10000)
 		{
-			{
-				bx = pArray[bodyIndex].position.x;
-				by = pArray[bodyIndex].position.y;
-				bz = pArray[bodyIndex].position.z;
-			}
+			b = true;
+		}
 
-			skip = true;
+		{
+			bx = pArray[bodyIndex].position.x;
+			by = pArray[bodyIndex].position.y;
+			bz = pArray[bodyIndex].position.z;
+		}
+
+		if (skip !=0)//new body 
+		{
+
+
+			skip = 0;
 			success = false;
 			depth = 1;
 			//find child index
@@ -217,14 +197,31 @@ __global__ void buildTreeInsertion(NodeGPU* root, int n, Particle* pArray, int *
 		{
 			
 
+			//count this node, add mass, work out centre of mass
+			//atomicAdd((float*)&mass[temp * 8 + childIndex], pArray[bodyIndex].mass);//adds mass
+			//atomicAdd((int*)&count[temp * 8 + childIndex], 1);
+			//int newCount = count[temp * 8 + childIndex];
+			//int oldCount = newCount - 1;
+
+			////centre of mass
+			////new cm = old count * (cm/new count) + new point/ new count
+			//float newCMX = oldCount * (cmx[temp * 8 + childIndex] / newCount) + bx / newCount;
+			//float newCMY = oldCount * (cmy[temp * 8 + childIndex] / newCount) + by / newCount;
+			//float newCMZ = oldCount * (cmz[temp * 8 + childIndex] / newCount) + bz / newCount;
+
+			//atomicExch((float*)&cmx[temp * 8 + childIndex], newCMX);
+			//atomicExch((float*)&cmy[temp * 8 + childIndex], newCMY);
+			//atomicExch((float*)&cmz[temp * 8 + childIndex], newCMZ);
+
 			temp = currentChild;
+
 			depth++;
 
 			childHalfSide = rootHalfSide * 0.5f;
 			dx = dy = dz = -childHalfSide;
 
 			//find child index
-
+			childIndex = 0;
 			if (nodeX < bx)
 			{
 				childIndex = 1;
@@ -253,8 +250,18 @@ __global__ void buildTreeInsertion(NodeGPU* root, int n, Particle* pArray, int *
 			{
 				if (-1 == atomicCAS((int*)&child[locked], -1, bodyIndex))//if null insert body
 				{
+
+					////adds mass
+					//atomicAdd((float*)&mass[locked], pArray[bodyIndex].mass);
+
+					////adds centre of mass
+					//atomicAdd((float*)&cmx[locked], bx);
+					//atomicAdd((float*)&cmy[locked], by);
+					//atomicAdd((float*)&cmz[locked], bz);
+					////counts
+					//atomicAdd((int*)&count[locked], 1);
 					bodyIndex += stride;
-					skip = false;
+					skip = 1;
 				}
 			}
 			else
@@ -267,15 +274,6 @@ __global__ void buildTreeInsertion(NodeGPU* root, int n, Particle* pArray, int *
 					{
 						depth++;
 
-
-						if (depth > 50)
-						{
-							
-							float s;
-							s = bx;
-							s = by;
-							s = bz;
-						}
 
 						cell = atomicSub((int*) &bottom, 1) - 1;
 
@@ -292,16 +290,31 @@ __global__ void buildTreeInsertion(NodeGPU* root, int n, Particle* pArray, int *
 						childIndex = 0;
 						float cx, cy, cz;
 
-						{
-							cx = pArray[currentChild].position.x;
-							cy = pArray[currentChild].position.y;
-							cz = pArray[currentChild].position.z;
-						}
+						
+						cx = pArray[currentChild].position.x;
+						cy = pArray[currentChild].position.y;
+						cz = pArray[currentChild].position.z;
+						
 
 						if (nodeX < cx) childIndex = 1;
 						if (nodeY < cy) childIndex |= 2;
 						if (nodeZ < cz) childIndex |= 4;
-						child[cell * 8 + childIndex] = currentChild; //inserting old body inro child cell
+						child[cell * 8 + childIndex] = currentChild; //inserting old body into child cell
+
+						//atomicAdd((float*)&mass[cell * 8 + childIndex], pArray[bodyIndex].mass);//adds mass
+						//atomicAdd((int*)&count[cell * 8 + childIndex], 1);
+						//int newCount = count[cell * 8 + childIndex];
+						//int oldCount = newCount - 1;
+
+						//adds centre of mass
+						//new cm = old count * (cm/new count) + new point/ new count
+						/*float newCMX = oldCount * (cmx[cell * 8 + childIndex] / newCount) + cx / newCount;
+						float newCMY = oldCount * (cmy[cell * 8 + childIndex] / newCount) + cy / newCount;
+						float newCMZ = oldCount * (cmz[cell * 8 + childIndex] / newCount) + cz / newCount;
+
+						atomicExch((float*)&cmx[cell * 8 + childIndex], newCMX);
+						atomicExch((float*)&cmy[cell * 8 + childIndex], newCMY);
+						atomicExch((float*)&cmz[cell * 8 + childIndex], newCMZ);*/
 					
 						temp = cell;
 						childHalfSide = childHalfSide * 0.5f;
@@ -327,11 +340,42 @@ __global__ void buildTreeInsertion(NodeGPU* root, int n, Particle* pArray, int *
 						nodeZ += dz;
 
 						currentChild = child[temp * 8 + childIndex]; //current child cell = new body's child if the same as old then ch will be equal to old body index and therefore !>= 0, so loop continues
+
+						//atomicAdd((float*)&mass[temp * 8 + childIndex], pArray[bodyIndex].mass);//adds mass
+						//atomicAdd((int*)&count[temp * 8 + childIndex], 1);
+						//newCount = count[temp * 8 + childIndex];
+						//oldCount = newCount - 1;
+
+						////adds centre of mass
+						////new cm = old count * (cm/new count) + new point/ new count
+						//newCMX = oldCount * (cmx[temp * 8 + childIndex] / newCount) + bx / newCount;
+						//newCMY = oldCount * (cmy[temp * 8 + childIndex] / newCount) + by / newCount;
+						//newCMZ = oldCount * (cmz[temp * 8 + childIndex] / newCount) + bz / newCount;
+
+						//atomicExch((float*)&cmx[temp * 8 + childIndex], newCMX);
+						//atomicExch((float*)&cmy[temp * 8 + childIndex], newCMY);
+						//atomicExch((float*)&cmz[temp * 8 + childIndex], newCMZ);
+
 					} while (currentChild >= 0); //repeat until bodies in differnet children
 					child[temp*8 + childIndex] = bodyIndex;//insert new body
+
+					
+
 					bodyIndex += stride;
 					success = true;
-					skip = false;
+					skip = 2;
+
+					__threadfence();
+
+					if (skip == 2)
+					{
+						1 * 3;
+					}
+					else
+					{
+						1 * 2;
+					}
+
 				}
 			}
 		}
@@ -341,5 +385,303 @@ __global__ void buildTreeInsertion(NodeGPU* root, int n, Particle* pArray, int *
 		{
 			child[locked] = patch;
 		}
+	}
+
+
+}
+
+__global__ void SumKernel(int* child, int* count, int numNodes, int n,  float* mass, Particle* pArray)
+{
+	
+	
+	int index = threadIdx.x + blockIdx.x * blockDim.x;
+	int stride = blockDim.x * gridDim.x;
+	int currentChild;
+	int i = 0;
+
+	int tempChild[8];//probably should be more
+	float tempMass[8];
+
+	bool success;
+
+	float cm, m, px,py,pz;
+	int counter;
+
+	if (index < bottom) index = index + stride;
+
+	int restart = index;
+
+	for (int j= 0; j < 5; j++)
+	{
+		while (index <= numNodes)
+		{
+			if (mass[index] < 0.0f)
+			{
+				for (i = 0; i < 8; i++)
+				{
+					currentChild = child[index * 8 + i];
+					tempChild[i+ threadIdx.x] = currentChild;
+					if ((currentChild >= n) && (tempMass[i+ threadIdx.x] = mass[currentChild]) < 0.0f)
+					{
+						break;
+					}
+				}
+
+				if (i ==8) //been through all 8 child
+				{
+					
+					px = 0.0f;
+					py = 0.0f;
+					pz = 0.0f;
+
+					cm = 0.0f;
+					counter = 0;
+
+					for (i = 0; i < 8; i++)
+					{
+						currentChild = tempChild[i + threadIdx.x];
+						if (currentChild >=0)
+						{
+							if (currentChild>= n)
+							{
+								m = tempMass[i + threadIdx.x];
+								counter += count[currentChild];
+
+							}
+							else
+							{
+								m = mass[currentChild];
+								counter++;
+							}
+
+							//now adding child's data
+
+							cm += m;
+							px += pArray->position.x;
+							py += pArray->position.y;
+							pz += pArray->position.z;
+							__threadfence();
+							mass[index] = cm;
+						}
+					}
+					index += stride;
+				}
+				index = restart;
+			}
+
+			success = false;
+			j = 0;
+
+			while (index <= numNodes)
+			{
+				if (mass[index] >= 0.0f)
+				{
+					index += stride;
+				}
+				else
+				{
+					if (j == 0)
+					{
+						j = 8;
+						for (int i = 0; i < 8; i++)
+						{
+							currentChild = child[index * 8 + i];
+							tempChild[i + threadIdx.x] = currentChild;
+							if ((currentChild < n) || ((tempMass[i + threadIdx.x] = mass[currentChild]) >= 0.0f))
+							{
+								j--;
+							}
+						}
+
+					}
+					else
+					{
+						j = 8;
+						for (int i = 0; i < 8; i++)
+						{
+							currentChild = tempChild[i + threadIdx.x];
+							if ((currentChild < n) || (tempMass[i  + threadIdx.x] >= 0.0f) || ((tempMass[i  + threadIdx.x] = mass[currentChild]) >= 0.0f))
+							{
+								j--;
+							}
+						}
+					}
+
+					if (j == 0)
+					{
+						px = 0.0f;
+						py = 0.0f;
+						pz = 0.0f;
+
+						cm = 0.0f;
+						counter = 0;
+
+						for (int i = 0; i < 8; i++)
+						{
+							currentChild = tempChild[i + threadIdx.x];
+							if (currentChild >= 0)
+							{
+								if (currentChild >= n)
+								{
+									m = tempMass[i + threadIdx.x];
+									counter += count[currentChild];
+								}
+								else
+								{
+									m = mass[currentChild];
+									counter++;
+								}
+
+								//now child's 
+								cm += m;
+								px += pArray->position.x;
+								py += pArray->position.y;
+								pz += pArray->position.z;
+							}
+						}
+						count[index] = counter;
+						m = 1.0f/ cm;
+						pArray[index].position.x = px * m;
+						pArray[index].position.y = py * m;
+						pArray[index].position.z = pz * m;
+						success = true;
+					}
+				}
+				__syncthreads();  // __threadfence();
+				if (success)
+				{
+					mass[index] = cm;
+					index += stride;
+					success = true;
+				}
+			}
+		}
+	}
+
+}
+
+
+__global__ void CalculateForces(int* child, int* count, float* mass, float* cmx, float* cmy, float* cmz, int numNodes, int n, Particle* pArray,float theta, float timeStep, float rootSideLegnth)
+{
+	int bodyIndex = threadIdx.x + blockIdx.x * blockDim.x;  //index of body based on thread 
+	int stride = blockDim.x * gridDim.x; //stride legnth based on number of threads
+	bool success;
+	int current;
+	float sideLegnth;
+	int depth;
+
+	float mult;
+	float ax;
+	float ay;
+	float az;
+
+	float g = 6.67408e-11f; //grav constant
+	
+	int stack[MAX_N];
+	int depthStack[MAX_N];
+	int top;
+	while (bodyIndex < n) //loop all bodies in thread
+	{
+		//starting at root's children
+		top = -1;
+		depth = 1;
+		sideLegnth = rootSideLegnth * 0.5f;
+
+
+		for (int i = 0; i < 8; i++)
+		{
+			top++;
+			stack[top] = numNodes* 8 + i; //push root's children
+			depthStack[top] = 1;
+		}
+
+
+		while (top >= 0) //while stack is not empty
+		{
+			current = stack[top];
+			depth = depthStack[top];
+			if (count[current] == 0 )
+			{
+				//empty node so pop
+				top--;
+			}
+			else
+			{
+				float diffX = pArray[bodyIndex].position.x - cmx[current];
+				float diffY = pArray[bodyIndex].position.y - cmz[current];
+				float diffZ = pArray[bodyIndex].position.z - cmz[current];
+				float distance = sqrtf(diffX * diffX + diffY * diffY + diffZ * diffZ);
+
+				if (count[current] ==1) //leaf node so calc forces
+				{
+					//calculate force
+					mult = (g * mass[current]) / (distance * distance * distance);
+					ax  =(diffX*mult*timeStep);
+					ay  =(diffX*mult*timeStep);
+					az  = (diffX*mult*timeStep);
+
+
+					pArray[bodyIndex].velocity.x -= ax;
+					pArray[bodyIndex].velocity.y -= ay;
+					pArray[bodyIndex].velocity.z -= az;
+
+
+					top--;//pop since now calculated
+
+				}
+				else 
+				{
+					sideLegnth = rootSideLegnth * powf(0.5, depth); //sidelegnth based on depth
+
+					if (sideLegnth /distance < theta)
+					{
+						//calc forces
+											//calculate force
+						mult = (g * mass[current]) / (distance * distance * distance);
+						ax = (diffX * mult * timeStep);
+						ay = (diffX * mult * timeStep);
+						az = (diffX * mult * timeStep);
+						pArray[bodyIndex].velocity.x -= ax;
+						pArray[bodyIndex].velocity.y -= ay;
+						pArray[bodyIndex].velocity.z -= az;
+						//now pop
+						top--;
+					}
+					else
+					{
+						top--;//pop the parent node
+						//need to add this node's children to be traversed
+						for (int i = 0; i < 8; i++)
+						{
+							top++;
+							stack[top] = child[current] * 8 + i; //push children
+							depthStack[top] = depth + 1;//depth is next depth;
+						}
+					}
+				}
+
+			}
+		}
+		bodyIndex += stride;
+	}
+
+}
+
+
+__global__ void IntegrateBH(unsigned int n, Particle* pArray, float timeStep)
+{
+	int id = blockDim.x * blockIdx.x + threadIdx.x; //id of current thread
+	int stride = blockDim.x * gridDim.x; //used to stride by number of threads
+
+	float g = 6.67408e-11f; //grav constant
+
+	for (int i = id; i < n; i += stride) //this will loop in i, incrementing by number of threads in parallel
+	{
+		
+		float vdt[3] = { pArray[i].velocity.x * timeStep,pArray[i].velocity.y * timeStep,pArray[i].velocity.z * timeStep };
+
+		pArray[i].position.x = pArray[i].position.x + vdt[0];
+		pArray[i].position.y = pArray[i].position.y + vdt[1];
+		pArray[i].position.z = pArray[i].position.z + vdt[2];
 	}
 }
