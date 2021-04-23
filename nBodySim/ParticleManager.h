@@ -4,10 +4,14 @@
 #include "Vector3.h"
 #include "DirectSolver.h"
 #include "BHTree.h"
-#include "BH.cuh"
+
+#include "Direct.cuh"
+#include "BarnesHut.cuh"
+
 #include "RK4Solver.h"
 #include "EulerSolver.h"
 #include "VerletSolver.h"
+
 
 class ParticleManager
 {
@@ -27,7 +31,8 @@ public:
 
 	DirectSolver* direct;
 	BHTree* barnesHut;
-	GPUCalls* parallelBarnesHut;
+	BarnesHutGPU* parallelBarnesHut;
+	DirectGPU* directGPU;
 
 	void Update(float dt, float timeStep);
 	void UpdateAllParticles(float timeStep);
@@ -55,6 +60,8 @@ private:
 	Vector3 FindRandomPos();
 	Vector3 FindRandomVel(int maxSpeed);
 	float FindVolume(float radius);
+
+	bool first = true;
 
 };
 

@@ -1,8 +1,10 @@
 #include "ParticleManager.h"
 #include <time.h> 
-
 #include "cuda_runtime.h"
 #include "cuda.h"
+
+//#include "cuda_runtime.h"
+//#include "cuda.h"
 
 
 ParticleManager::ParticleManager(Vector3 extents, float g, int numberOfParticles)
@@ -10,8 +12,9 @@ ParticleManager::ParticleManager(Vector3 extents, float g, int numberOfParticles
 	posSystemExtents = extents;
 	negSystemExtents = extents;
 	negSystemExtents.scale(-1.0f);
-	direct = new DirectSolver(g);
+	//direct = new DirectSolver(g);
 	barnesHut = new BHTree(extents.x*10.0f, g, 0.5f);
+
 
 	grav = g;
 	n = numberOfParticles;
@@ -19,9 +22,19 @@ ParticleManager::ParticleManager(Vector3 extents, float g, int numberOfParticles
 	int bytes = n * sizeof(Particle);
 
 	cudaMallocManaged(&particlesArray, bytes);
+	
+
+
+	//directGPU->InitDevice(n);
+//	parallelBarnesHut->InitRoot(n, extents.x * 10.0f);
 
 	solver = new VerletSolver(g);
-	solver = barnesHut;
+	solver  = new DirectGPU(n);
+	solver  = new BHTree(extents.x * 10.0f, g, 0.5f);
+	solver  = new RK4Solver(g);
+	//solver  = new EulerSolver(g);
+
+
 
 }
 
@@ -98,58 +111,10 @@ Particle* ParticleManager::GetParticlesArray()
 
 void ParticleManager::Update(float dt, float timeStep)
 {
-
-	//if (direct->Update(dt, 0.5f))
-	//{
-		//direct->SolveEuler(dt, particlesArray, timeStep, n);
-		//UpdateAllParticles(timeStep);
-	///}
-
-	//if (direct->Update(dt, 0.5f))
-	//{
-	//	direct->SolveVerlet(dt, particlesArray, timeStep,  n);
-	//	UpdateAllParticles(timeStep);
-	//}
-	//	
-	//if (barnesHut->Update(dt, timeStep))
-	//{
-	//	barnesHut->DeleteTree();
-	//	barnesHut->ConstructTree(&particles);
-	//	barnesHut->CalculateForces(0.5f, &particles,timeStep);
-	//	UpdateAllParticles(timeStep);
-	//}
-
-	//if (direct->Update(dt, 0.5f))
-	//{
-	//	//printf("hello pM");
-	//	parallelBarnesHut->DoFoo(n, particlesArray);
-	//	UpdateAllParticles(timeStep);
-
-	//}
-
-
-	//if (direct->Update(dt, timeStep))
-	//{
-	//	direct->SolveRK4(dt, particlesArray, 0.1, n);
-	//	UpdateAllParticles(timeStep);
-	//}
-
-	//if (solver->Update(dt, timeStep))
-	{
-		solver->Solve(particlesArray, 0.5, n);
-		UpdateAllParticles(timeStep);
-	}
-
+	solver->Solve(particlesArray, 0.5, n);
 }
+	
 
-void ParticleManager::UpdateAllParticles(float timeStep)
-{
-	for (int i = 0; i < n; i++)
-	{
-		particlesArray[i].Update(timeStep);
-		
-	}
-}
 
 
 

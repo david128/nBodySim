@@ -115,7 +115,7 @@ void RK4Solver::Solve(Particle* particles, float timeStep, int n)
 	{
 
 		//kx4 = h*(v(n) +kv3)	
-		kx4[i] = particles[i].velocity + kx3[i];
+		kx4[i] = particles[i].velocity + kv3[i];
 		kx4[i].scale(timeStep);
 
 		//loop all particles 
@@ -149,8 +149,8 @@ void RK4Solver::Solve(Particle* particles, float timeStep, int n)
 		kv3[i].scale(1.0f / 3.0f);
 		kv4[i].scale(1.0f / 6.0f);
 
-		particles[i].nextPosition = particles[i].position + kx1[i] + kx2[i] + kx3[i] + kx4[i];
-		particles[i].velocity = particles[i].velocity + kv1[i] + kv2[i] + kv3[i] + kv4[i];
+		particles[i].position += kx1[i] + kx2[i] + kx3[i] + kx4[i];
+		particles[i].velocity += kv1[i] + kv2[i] + kv3[i] + kv4[i];
 
 	}
 }

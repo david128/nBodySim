@@ -37,7 +37,7 @@ public:
     void DeleteTree();
     void CalculateForces(Particle* particles, int n, float timeStep);
     void TraversNode(Particle* particle, float theta, Node* node, float timeStep);
- 
+    void UpdatePositions(Particle* particles, float timeStep, int n);
 
     void Solve(Particle* particles, float timeStep, int n);
 
