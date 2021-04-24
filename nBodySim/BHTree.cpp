@@ -29,7 +29,7 @@ void BHTree::ConstructTree (Particle* particles, int n)
 {
 
 
-	root.position = Vector3(maxPos, maxPos, maxPos);
+	root.position = Vector3(0, 0, 0);
 	root.sideLegnth = maxPos * 2.0f;
 	
 
@@ -129,9 +129,8 @@ void BHTree::Solve(Particle* particles, float timeStep, int n)
 void BHTree::SplitNode(Node* currentNode)
 {
 	
-	float halfSide = currentNode->sideLegnth * 0.5;
-	Vector3 parentCentre = Vector3(currentNode->position.x - halfSide, currentNode->position.y - halfSide, currentNode->position.z - halfSide); //pos is centre +half side in pos; centre = pos -halfside
-
+	float halfSide = currentNode->sideLegnth * 0.5f;
+	
 	//create 8 nodes
 	for (int i = 0; i < 8; i++)
 	{
@@ -140,15 +139,16 @@ void BHTree::SplitNode(Node* currentNode)
 		//currentNode->children[i]->FindLocalPosition(i, parentCentre);
 		
 	}
+	float quarterSide = halfSide * 0.5f;
 	//set positions
-	currentNode->children[0]->position = parentCentre + Vector3(0.0f, 0.0f, 0.0f);
-	currentNode->children[1]->position = parentCentre + Vector3(halfSide, 0.0f, 0.0f);
-	currentNode->children[2]->position = parentCentre + Vector3(0.0f, halfSide, 0.0f);
-	currentNode->children[3]->position = parentCentre + Vector3(halfSide, halfSide, 0.0f);
-	currentNode->children[4]->position = parentCentre + Vector3(0.0f, 0.0f, halfSide);
-	currentNode->children[5]->position = parentCentre + Vector3(halfSide, 0.0f, halfSide);
-	currentNode->children[6]->position = parentCentre + Vector3(0.0f, halfSide, halfSide);
-	currentNode->children[7]->position = parentCentre + Vector3(halfSide, halfSide, halfSide);
+	currentNode->children[0]->position = currentNode->position + Vector3(-quarterSide, -quarterSide, -quarterSide);
+	currentNode->children[1]->position = currentNode->position + Vector3(quarterSide, -quarterSide, -quarterSide);
+	currentNode->children[2]->position = currentNode->position + Vector3(-quarterSide, quarterSide, -quarterSide);
+	currentNode->children[3]->position = currentNode->position + Vector3(quarterSide, quarterSide, -quarterSide);
+	currentNode->children[4]->position = currentNode->position + Vector3(-quarterSide, -quarterSide, quarterSide);
+	currentNode->children[5]->position = currentNode->position + Vector3(quarterSide, -quarterSide, quarterSide);
+	currentNode->children[6]->position = currentNode->position + Vector3(-quarterSide, quarterSide, quarterSide);
+	currentNode->children[7]->position = currentNode->position + Vector3(quarterSide, quarterSide, quarterSide);
 	
 	int childIndex;
 	//assign all particles to appropriate node
@@ -157,9 +157,9 @@ void BHTree::SplitNode(Node* currentNode)
 					
 		//find child index
 		childIndex = 0;
-		if (parentCentre.x < currentNode->particles.at(i)->position.x) { childIndex = 1; } //0,
-		if (parentCentre.y < currentNode->particles.at(i)->position.y) { childIndex |= 2; }
-		if (parentCentre.z < currentNode->particles.at(i)->position.z) { childIndex |= 4; }
+		if (currentNode->position.x < currentNode->particles.at(i)->position.x) { childIndex = 1; } //0,
+		if (currentNode->position.y < currentNode->particles.at(i)->position.y) { childIndex |= 2; }
+		if (currentNode->position.z < currentNode->particles.at(i)->position.z) { childIndex |= 4; }
 
 		currentNode->children[childIndex]->particleCount++;
 		currentNode->children[childIndex]->particles.push_back(currentNode->particles[i]);
@@ -183,15 +183,16 @@ void BHTree::SplitNode(Node* currentNode)
 			}
 			else
 			{
-				//sum masses and positions
+				//sum masses and weighted positions
 				for (int j = 0; j < currentNode->children[i]->particleCount; j++)
 				{
 					currentNode->children[i]->combinedMass += currentNode->children[i]->particles.at(j)->mass;
-					currentNode->children[i]->averagePos += currentNode->children[i]->particles.at(j)->position;
+					Vector3 weightedPosition = currentNode->children[i]->particles.at(j)->position;
+					weightedPosition.scale(currentNode->children[i]->particles.at(j)->mass);
+					currentNode->children[i]->averagePos += weightedPosition; //add position*mass
 				}
-				//find average
-				currentNode->children[i]->averagePos.scale(1.0f / (float)currentNode->children[i]->particleCount);
-
+				//find weighted average
+				currentNode->children[i]->averagePos.scale(1.0f / currentNode->children[i]->combinedMass); 
 
 				SplitNode(currentNode->children[i]); //further split node until 1 or 0 particles
 				
