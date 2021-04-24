@@ -104,7 +104,7 @@ void ParticleManager::InitMethod()
 	//solver  = new DirectGPU(n);
 	solver = new BHTree(grav, 0.5f, particlesArray, n);
 	//solver  = new RK4Solver(g);
-	solver  = new EulerSolver(grav);
+	//solver  = new EulerSolver(grav);
 }
 
 Particle* ParticleManager::GetParticlesArray()

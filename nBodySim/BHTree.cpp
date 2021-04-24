@@ -137,47 +137,32 @@ void BHTree::SplitNode(Node* currentNode)
 	{
 		currentNode->children.push_back(new Node());
 		currentNode->children[i]->sideLegnth = halfSide;
-		currentNode->children[i]->FindLocalPosition(i, parentCentre);
+		//currentNode->children[i]->FindLocalPosition(i, parentCentre);
 		
 	}
+	//set positions
+	currentNode->children[0]->position = parentCentre + Vector3(0.0f, 0.0f, 0.0f);
+	currentNode->children[1]->position = parentCentre + Vector3(halfSide, 0.0f, 0.0f);
+	currentNode->children[2]->position = parentCentre + Vector3(0.0f, halfSide, 0.0f);
+	currentNode->children[3]->position = parentCentre + Vector3(halfSide, halfSide, 0.0f);
+	currentNode->children[4]->position = parentCentre + Vector3(0.0f, 0.0f, halfSide);
+	currentNode->children[5]->position = parentCentre + Vector3(halfSide, 0.0f, halfSide);
+	currentNode->children[6]->position = parentCentre + Vector3(0.0f, halfSide, halfSide);
+	currentNode->children[7]->position = parentCentre + Vector3(halfSide, halfSide, halfSide);
 	
-
-	parentCentre += Vector3(0.01f, 0.01f, 0.01f); //alter to avoid dividing by 0
-
-
-	
+	int childIndex;
 	//assign all particles to appropriate node
 	for (int i = 0; i < currentNode->particleCount; i++)
 	{
-		bool inside = true; // if particle is not inside extents of root then do not recursively split it.
-		if (abs(currentNode->particles.at(i)->position.x) > root.sideLegnth*0.5f || abs(currentNode->particles.at(i)->position.y) > root.sideLegnth * 0.5f || abs(currentNode->particles.at(i)->position.z) > root.sideLegnth * 0.5f)
-		{
-			inside = false; //if not inside extents, set inside to false
-		}
-		//pos -centre point to find if coordinates are - or + directions from centre
-		Vector3 dir = currentNode->particles.at(i)->position - parentCentre;
+					
+		//find child index
+		childIndex = 0;
+		if (parentCentre.x < currentNode->particles.at(i)->position.x) { childIndex = 1; } //0,
+		if (parentCentre.y < currentNode->particles.at(i)->position.y) { childIndex |= 2; }
+		if (parentCentre.z < currentNode->particles.at(i)->position.z) { childIndex |= 4; }
 
-		if (inside) //only place particle if inside extents(otherwise will not correctly place, and will inifinitely run until out of memory crash.
-		{
-			
-			dir = Vector3((dir.x / abs(dir.x)), (dir.y / abs(dir.y)), (dir.z / abs(dir.z)));
-			bool placed = false;
-			int j = 0;
-			while (!placed)
-			{
-				if (dir.equals(currentNode->children[j]->localPosition))
-				{
-					currentNode->children[j]->particleCount++;
-					currentNode->children[j]->particles.push_back(currentNode->particles[i]);
-					//currentNode->children[j]->particles[currentNode->children[j]->particleCount -1] = &currentNode->particles[i]; //add this particle to child
-
-					placed = true;
-				}
-				j++;
-			}
-		}
-
-		
+		currentNode->children[childIndex]->particleCount++;
+		currentNode->children[childIndex]->particles.push_back(currentNode->particles[i]);
 
 	}
 
@@ -238,42 +223,3 @@ void BHTree::DeleteNode(Node* currentNode)
 	
 }
 
-void Node::FindLocalPosition(int i, Vector3 parentCentre)
-{
-	switch (i)
-	{
-	case 0:
-		localPosition = Vector3(1, 1, 1);
-		position = parentCentre + Vector3(sideLegnth, sideLegnth, sideLegnth);
-
-		break;
-	case 1:
-		localPosition = Vector3(1, -1, -1);
-		position = parentCentre + Vector3(sideLegnth, 0.0f, 0.0f);
-		break;
-	case 2:
-		localPosition = Vector3(1, -1, 1);
-		position = parentCentre + Vector3(sideLegnth, 0.0f, sideLegnth);
-		break;
-	case 3:
-		localPosition = Vector3(1, 1, -1);
-		position = parentCentre + Vector3(sideLegnth, sideLegnth, 0.0f);
-		break;
-	case 4:
-		localPosition = Vector3(-1, 1, 1);
-		position = parentCentre + Vector3(0.0f, sideLegnth, sideLegnth);
-		break;
-	case 5:
-		localPosition = Vector3(-1, 1,- 1);
-		position = parentCentre + Vector3(0.0f, sideLegnth, 0.0f);
-		break;
-	case 6:
-		localPosition = Vector3(-1, -1, 1);
-		position = parentCentre + Vector3(0.0f, 0.0f, sideLegnth);
-		break;
-	case 7:
-		localPosition = Vector3(-1, -1,- 1);
-		position = parentCentre + Vector3(0.0f, 0.0f, 0.0f);
-		break;
-	}
-}

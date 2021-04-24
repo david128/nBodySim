@@ -6,20 +6,13 @@
 
 
 struct Node {
-
-
     int particleCount;
-    //Node* children[8];
     std::vector<Node*> children;
     Vector3 averagePos;
     float combinedMass;
     float sideLegnth;
     Vector3 position;
-    Vector3 localPosition;
     std::vector<Particle*> particles;
-    Particle* particle;
-   
-    void FindLocalPosition(int i, Vector3 parentCentre);
 };
 
 class BHTree: 

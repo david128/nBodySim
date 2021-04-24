@@ -27,7 +27,7 @@ Scene::Scene(Input *inp)
 
 
 
-	particleManager = new ParticleManager(Vector3(10000.0f, 10000.0f, 10000.0f), g, 6);
+	particleManager = new ParticleManager(Vector3(10000.0f, 10000.0f, 10000.0f), g, 200);
 	//particleManager->InitSystem();
 	particleManager->InitDiskSystem(1500,4000,100);
 	//particleManager->InitTestSystem();
