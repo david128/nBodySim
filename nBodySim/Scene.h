@@ -48,6 +48,11 @@ private:
 
 	float timeStep = 0.5f;
 
+	int updates = 0;
+
+	int method;
+	int runFor= 1000;
+
 public:
 	Scene(Input* inp);
 	// render function
@@ -58,6 +63,8 @@ public:
 	void update(float dt);
 	//resize
 	void resize(int w, int h);
+
+	void ReadSetupFiles();
 
 	void InitCamera();
 	void MoveCamera();

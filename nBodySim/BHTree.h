@@ -27,7 +27,7 @@ class BHTree:
 {
 public:
 
-    BHTree(float side, float gravConst,float th);
+    BHTree(float gravConst, float th, Particle* particles, int n);
     ~BHTree();
 
 

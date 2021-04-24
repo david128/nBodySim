@@ -1,13 +1,19 @@
 #include "BHTree.h"
 
 
-BHTree::BHTree(float halfSide , float gravConst,float th)
+BHTree::BHTree(float gravConst,float th, Particle* particles, int n)
 {
-	
-	root.position = Vector3(halfSide, halfSide, halfSide);
-	maxPos = halfSide;
-	root.sideLegnth = halfSide * 2.0f;;
+	maxPos = 0;
 
+	for (int i = 0; i < n; i++)
+	{
+		root.particles.push_back(&particles[i]);
+		if (abs(particles[i].position.x) > maxPos) { maxPos = abs(particles[i].position.x);}
+		if (abs(particles[i].position.y) > maxPos) { maxPos = abs(particles[i].position.y);}
+		if (abs(particles[i].position.z) > maxPos) { maxPos = abs(particles[i].position.z);}
+	}
+
+	root.particleCount = n;
 	g = gravConst;
 	theta = th;
 
@@ -21,12 +27,12 @@ BHTree::~BHTree()
 
 void BHTree::ConstructTree (Particle* particles, int n)
 {
-	for (int i = 0; i < n; i++)
-	{
-		root.particles.push_back(&particles[i]);
-	}
 
-	root.particleCount = n;
+
+	root.position = Vector3(maxPos, maxPos, maxPos);
+	root.sideLegnth = maxPos * 2.0f;
+	
+
 	if (n > 1)
 	{
 		SplitNode(&root);
@@ -101,8 +107,12 @@ void BHTree::UpdatePositions(Particle* particles, float timeStep, int n)
 		Vector3 vDt = particles[i].velocity;
 		vDt.scale(timeStep);
 		particles[i].position += vDt;
+		//expand if needed
+		if (abs(particles[i].position.x) > maxPos) { maxPos = abs(particles[i].position.x); } 
+		if (abs(particles[i].position.y) > maxPos) { maxPos = abs(particles[i].position.y); }
+		if (abs(particles[i].position.z) > maxPos) { maxPos = abs(particles[i].position.z); }
 	}
-
+	
 }
 
 
@@ -131,10 +141,9 @@ void BHTree::SplitNode(Node* currentNode)
 		
 	}
 	
-	if (parentCentre.x == 0.0f || parentCentre.y == 0.0f || parentCentre.z == 0.0f)
-	{
-		parentCentre += Vector3(0.01f, 0.01f, 0.01f); //alter to avoid dividing by 0
-	}
+
+	parentCentre += Vector3(0.01f, 0.01f, 0.01f); //alter to avoid dividing by 0
+
 
 	
 	//assign all particles to appropriate node

@@ -1,6 +1,7 @@
 #include "Scene.h"
-
-
+#include <iostream>
+#include <fstream>
+#include <string>
 //temp
 
 
@@ -9,6 +10,8 @@
 Scene::Scene(Input *inp)
 {
 	input = inp;
+
+	ReadSetupFiles();
 	
 	//OpenGL settings
 	glShadeModel(GL_SMOOTH);							// Enable Smooth Shading
@@ -23,47 +26,14 @@ Scene::Scene(Input *inp)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);	//blend function settings
 
 
-	//set up particles initial conditions
-	//particle = new Particle(50.0f, Vector3(0.0f, 2500.0f, 0.0f));
-	//particle->mass = 5.972e24f/d;
-	//particle2 = new Particle(250.0f, Vector3(0.0f, 0.0f, 0.0f));
-	//particle2->mass = 1.989e30f/d;
-	//particle3 = new Particle(50.0f, Vector3(0.0f, 2000.0f, 0.0f));
-	//particle3->mass = 5.972e24f / d;;
-	//particle->velocity = -200;
-	//particle3->velocity = -300;
-	//particle4 = new Particle(50.0f, Vector3(0.0f, 3000.0f, 0.0f));
-	//particle4->mass = 5.972e24f / d;;
-	//particle4->velocity = -120.0f;
-	//
-	//store particles
-	//particles.push_back(particle);
-	//particles.push_back(particle2);
-	//particles.push_back(particle3);
-	//particles.push_back(particle4);
 
-	particleManager = new ParticleManager(Vector3(10000.0f, 10000.0f, 10000.0f), g, 2);
+	particleManager = new ParticleManager(Vector3(10000.0f, 10000.0f, 10000.0f), g, 6);
 	//particleManager->InitSystem();
-	//particleManager->InitDiskSystem(3000,5000,100);
-	particleManager->InitTestSystem();
+	particleManager->InitDiskSystem(1500,4000,100);
+	//particleManager->InitTestSystem();
 
+	particleManager->InitMethod();
 
-
-
-	//particleManager->AddParticle(sun);
-	//particleManager->AddParticle(mercury);
-	//particleManager->AddParticle(venus);
-	//particleManager->AddParticle(earth);
-	//particleManager->AddParticle(mars);
-	//particleManager->AddParticle(jupiter);
-	//particleManager->AddParticle(saturn);
-	//particleManager->AddParticle(uranus);
-	//particleManager->AddParticle(neptune);
-	//particleManager->AddParticle(pluto);
-
-	//particleManager->AddParticle(p1);
-	//particleManager->AddParticle(p2);
-	//particleManager->n = 2;
 
 	InitCamera();
 	
@@ -75,9 +45,9 @@ void Scene::InitCamera()
 	camera = new Camera();
 	camera->setXzAngle(90.0f);
 	camera->setCameraLook(Vector3(0.0f, 0.0f, 0.0f));
-	camera->setCameraPos(Vector3(0.0f, 0.0f, 500));
+	camera->setCameraPos(Vector3(0.0f, 0.0f, 20000));
 	camera->setCameraUp(Vector3(0, 1, 0));
-	camera->SetDistanceToLook(500.0f);
+	camera->SetDistanceToLook(20000.0f);
 
 }
 
@@ -129,7 +99,16 @@ void Scene::update(float dt)
 
 	//time = time + frame time
 	time += dt;
+	updates++;
+
 	particleManager->Update(dt, timeStep);
+	if (updates == runFor)
+	{
+		std::ofstream outfile("output.txt");
+
+		outfile << "ran in" << std::endl;
+
+	}
 	//update camera
 	//camera->update();
 	
@@ -165,4 +144,17 @@ void Scene::resize(int w, int h)
 	glMatrixMode(GL_MODELVIEW);
 
 
+}
+
+void Scene::ReadSetupFiles()
+{
+	std::ifstream file("setup.txt");
+	std::string a,b,c,d;
+
+
+
+	while (file >> a >> b >> c >> d);
+	{
+		method = 0;
+	}
 }

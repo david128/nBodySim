@@ -20,12 +20,13 @@ public:
 
 	Particle* CreateRandomParticle();
 	void AddParticle(Particle* part);
-	void InitSystem(int hugeParticles, int largeParticles, int mediumParticles, int smallParticles );
+
 	void InitSystem();
 	void InitTestSystem();
 	void InitDiskSystem(float minR, float maxR, float height);
 
-	Particle* GetParticle(int id);
+	void InitMethod();
+
 	Particle* GetParticlesArray();
 	
 
@@ -35,9 +36,7 @@ public:
 	DirectGPU* directGPU;
 
 	void Update(float dt, float timeStep);
-	void UpdateAllParticles(float timeStep);
-
-
+	
 	int n;
 private:
 

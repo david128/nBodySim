@@ -9,15 +9,15 @@
 
 ParticleManager::ParticleManager(Vector3 extents, float g, int numberOfParticles)
 {
+	grav = g;
+	n = numberOfParticles;
 	posSystemExtents = extents;
 	negSystemExtents = extents;
 	negSystemExtents.scale(-1.0f);
-	//direct = new DirectSolver(g);
-	barnesHut = new BHTree(extents.x*10.0f, g, 0.5f);
 
 
-	grav = g;
-	n = numberOfParticles;
+
+
 
 	int bytes = n * sizeof(Particle);
 
@@ -25,14 +25,8 @@ ParticleManager::ParticleManager(Vector3 extents, float g, int numberOfParticles
 	
 
 
-	//directGPU->InitDevice(n);
-//	parallelBarnesHut->InitRoot(n, extents.x * 10.0f);
 
-	solver = new VerletSolver(g);
-	solver  = new DirectGPU(n);
-	solver  = new BHTree(extents.x * 10.0f, g, 0.5f);
-	solver  = new RK4Solver(g);
-	//solver  = new EulerSolver(g);
+
 
 
 
@@ -83,7 +77,7 @@ void ParticleManager::InitTestSystem()
 void ParticleManager::InitDiskSystem(float minR,float maxR, float height)
 {
 	Particle* newP; 
-	float largeMass = 100000.0;
+	float largeMass = 1000000000000000000.0;
 	float smallMass = 1;
 	newP = new Particle(100, Vector3(0.0f, 0.0f, 0.0f),largeMass, Vector3(0.0f, 0.0f, 0.0f));
 	particlesArray[0] = *newP;
@@ -96,12 +90,21 @@ void ParticleManager::InitDiskSystem(float minR,float maxR, float height)
 		//random radius
 		float r = FindRandomSize(minR,maxR);
 		float h = FindRandomSize(-height,height);
-		float v = smallMass * sqrt((grav * largeMass) / r);
+		float v =  sqrt((grav * largeMass) / r);
 
-		newP = new Particle(50, Vector3(r*cosf(theta), r * sinf(theta),height), smallMass = 10, Vector3(v*sinf(theta), -v*cosf(theta), 0.0f));
+		newP = new Particle(50, Vector3(r*cosf(theta), r * sinf(theta),height), smallMass = 10, Vector3(v*sinf(theta), -v*cosf(theta), 0));
 		particlesArray[i] = *newP;
 
 	}
+}
+
+void ParticleManager::InitMethod()
+{
+	//solver = new VerletSolver(grav);
+	//solver  = new DirectGPU(n);
+	solver = new BHTree(grav, 0.5f, particlesArray, n);
+	//solver  = new RK4Solver(g);
+	solver  = new EulerSolver(grav);
 }
 
 Particle* ParticleManager::GetParticlesArray()
