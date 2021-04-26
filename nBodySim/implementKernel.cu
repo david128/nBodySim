@@ -20,17 +20,26 @@ void EulerAcceleration(unsigned int n, Particle* pArray, float timeStep)
 
 	float g = 6.67408e-11f; //grav constant
 
+	float acc[3] = { 0.0f,0.0f,0.0f };
+	float diff[3];
+	float dist;
+	float multiplier;
+
 	for (int i = id; i < n; i += stride) //this will loop in i, incrementing by number of threads in parallel
 	{
-		float acc[3] = { 0.0f,0.0f,0.0f };
+		acc[0] = 0;
+		acc[1] = 0;
+		acc[2] = 0;
 		for (int j = 0; j < n; j++) //j loop that increments by 1 calculating acc in serial
 		{
 
 			if (i != j)
 			{
-				float diff[3] = { pArray[i].position.x - pArray[j].position.x, pArray[i].position.y - pArray[j].position.y, pArray[i].position.z - pArray[j].position.z };
-				float dist = sqrtf(diff[0] * diff[0] + diff[1] * diff[1] + diff[2] * diff[2]); //get distance
-				float multiplier = (g * pArray[j].mass) / (dist * dist * dist); //multiplier  (g * mass )/ (distance ^3)
+				diff[0] = pArray[i].position.x - pArray[j].position.x;
+				diff[1] = pArray[i].position.y - pArray[j].position.y;
+				diff[2] = pArray[i].position.z - pArray[j].position.z;
+				dist = sqrtf(diff[0] * diff[0] + diff[1] * diff[1] + diff[2] * diff[2]); //get distance
+				multiplier = (g * pArray[j].mass) / (dist * dist * dist); //multiplier  (g * mass )/ (distance ^3)
 
 
 				diff[0] = diff[0] * -multiplier;
@@ -67,10 +76,12 @@ __global__ void EulerPosition(unsigned int n, Particle* pArray, float timeStep)
 
 	int id = blockDim.x * blockIdx.x + threadIdx.x; //id of current thread
 	int stride = blockDim.x * gridDim.x; //used to stride by number of threads
-	
+	float vdt[3];
 	for (int i = id; i < n; i += stride)
 	{
-		float vdt[3] = { pArray[i].velocity.x * timeStep, pArray[i].velocity.y * timeStep,pArray[i].velocity.z * timeStep };
+		vdt[0] = (pArray[i].velocity.x * timeStep);
+		vdt[1] = (pArray[i].velocity.y * timeStep);
+		vdt[2] = (pArray[i].velocity.z * timeStep );
 		pArray[i].position.x += vdt[0];
 		pArray[i].position.y += vdt[1];
 		pArray[i].position.z += vdt[2];
