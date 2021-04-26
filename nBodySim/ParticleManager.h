@@ -11,12 +11,14 @@
 #include "RK4Solver.h"
 #include "EulerSolver.h"
 #include "VerletSolver.h"
+#include <string>
 
 
 class ParticleManager
 {
 public:
-	ParticleManager(Vector3 extents, float g, int numberOfParticles);
+	ParticleManager(Vector3 extents, float g, int numberOfParticles, int rf, std::string mN);
+	~ParticleManager();
 
 	Particle* CreateRandomParticle();
 	void AddParticle(Particle* part);
@@ -25,42 +27,40 @@ public:
 	void InitTestSystem();
 	void InitDiskSystem(float minR, float maxR, float height);
 
-	void InitMethod();
+	void InitMethod(int m);
 
 	Particle* GetParticlesArray();
 	
 
-	DirectSolver* direct;
-	BHTree* barnesHut;
-	BarnesHutGPU* parallelBarnesHut;
-	DirectGPU* directGPU;
+
 
 	void Update(float dt, float timeStep);
-	
+	float SumEnergy();
+	void Reset();
+
 	int n;
 private:
+	
+	int sum = 0;
+	int ran;
+	int runFor;
+	std::string methodName;
 
 	float grav;
 	Solver* solver;
 
-	Vector3 posSystemExtents;
-	Vector3 negSystemExtents;
-
 	//particles
-
 	Particle* particlesArray;
-
-	Particle hugeParticle;
-	Particle largeParticle;
-	Particle mediumParticle;
-	Particle smallParticle;
 	
 	float FindRandomSize(int min, int max);
 	Vector3 FindRandomPos();
 	Vector3 FindRandomVel(int maxSpeed);
 	float FindVolume(float radius);
 
-	bool first = true;
+	std::vector<float> recordEnergy;
+	std::vector<float> recordTime;
+
+	void PrintResults(float timeStep);
 
 };
 

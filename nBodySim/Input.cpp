@@ -22,9 +22,9 @@ bool Input::isKeyDown(int key)
 
 bool Input::isKeyPressed(int key)
 {
-	if (keys[key].pressed)
+	if (keys[key].down)
 	{
-		keys[key].pressed = false;
+		keys[key].down = false;
 		return true;
 	}
 	else

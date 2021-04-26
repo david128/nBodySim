@@ -12,7 +12,8 @@
 #include "DirectSolver.h"
 
 #include <vector>
-
+#include <sstream>
+#include <string>
 
 enum METHOD
 {
@@ -40,7 +41,7 @@ private:
 	
 	// For Window and frustum calculation.
 	int width, height;
-	float fov, nearPlane, farPlane;
+	float fov, ratio, nearPlane, farPlane;
 
 	float time = 1.0f; // set so will be calculated at start
 	
@@ -49,9 +50,18 @@ private:
 	float timeStep = 0.5f;
 
 	int updates = 0;
-
-	int method;
+	
+	int newN = 0;
+	int method =0;
 	int runFor= 1000;
+	float theta = 0.5f;
+	
+
+	std::string methodText[5];
+	std::string timeStepText;
+	std::string thetaText;
+	std::string runForText;
+	std::string nText;
 
 public:
 	Scene(Input* inp);
@@ -64,8 +74,9 @@ public:
 	//resize
 	void resize(int w, int h);
 
+	void Restart();
 	void ReadSetupFiles();
-
+	void RenderString(float x, float y, std::string string);
 	void InitCamera();
 	void MoveCamera();
 };

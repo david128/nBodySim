@@ -11,6 +11,12 @@ Scene::Scene(Input *inp)
 {
 	input = inp;
 
+	methodText[0] = "Euler";
+	methodText[1] = "RK4";
+	methodText[2] = "Verlet";
+	methodText[3] = "Barnes_Hut";
+	methodText[4] = "Euler GPU";
+
 	ReadSetupFiles();
 	
 	//OpenGL settings
@@ -27,12 +33,13 @@ Scene::Scene(Input *inp)
 
 
 
-	particleManager = new ParticleManager(Vector3(10000.0f, 10000.0f, 10000.0f), g, 587);
+	particleManager = new ParticleManager(Vector3(10000.0f, 10000.0f, 10000.0f), g, newN, runFor, methodText[method]);
+
 	//particleManager->InitSystem();
 	particleManager->InitDiskSystem(1500,4000,100);
 	//particleManager->InitTestSystem();
 
-	particleManager->InitMethod();
+	particleManager->InitMethod(method);
 
 
 	InitCamera();
@@ -58,6 +65,23 @@ void Scene::render(float dt)
 	glLoadIdentity();
 
 	gluLookAt(camera->getCameraPos().getX(), camera->getCameraPos().getY(), camera->getCameraPos().getZ(), camera->getCameraLook().getX(), camera->getCameraLook().getY(), camera->getCameraLook().getZ(), camera->getCameraUp().getX(), camera->getCameraUp().getY(), camera->getCameraUp().getZ());
+
+	nText = ("N :" + std::to_string(newN));
+	timeStepText = ("Time Step:" + std::to_string(timeStep));
+	runForText = ("Run For:" + std::to_string(runFor));
+	thetaText = ("Theta :" + std::to_string(theta));
+	
+
+	RenderString((width * -14.0f)/ratio, (height * 15.0f) / ratio,methodText[method]);
+	RenderString((width * -14.0f)/ratio, (height * 14.0f) / ratio,nText);
+	RenderString((width * -14.0f)/ratio, (height * 13.0f) / ratio, timeStepText);
+	RenderString((width * -14.0f)/ratio, (height * 12.0f) / ratio, runForText);
+	RenderString((width * -14.0f)/ratio, (height * 11.0f) / ratio, thetaText);
+
+	
+	
+
+
 	Particle* particles = particleManager->GetParticlesArray();
 	for (int i = 0; i < particleManager->n; i++)
 	{
@@ -65,33 +89,121 @@ void Scene::render(float dt)
 	}
 
 
+
 	glutSwapBuffers();
 
 }
 
+void Scene::RenderString(float x, float y, std::string string)
+{
+	// Need to use 2D
+	//glMatrixMode(GL_PROJECTION);
+	//glLoadIdentity();
+	//glOrtho(-1.0, 1.0, -1.0, 1.0, 5, 100);
+	//glMatrixMode(GL_MODELVIEW);
+	//glLoadIdentity();
+	//gluLookAt(0.0f, 0.0f, 10.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+
+	glRasterPos2f(x,y);
+
+	//char* c = string.c_str;
+	// Render text.
+	for (int i = 0; i < string.size(); i++)
+	{
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, string[i]);
+	}
+
+
+	// back to 3D
+	//glMatrixMode(GL_PROJECTION);
+	//glLoadIdentity();
+	//gluPerspective(fov, ((float)width / (float)height), nearPlane, farPlane);
+	//glMatrixMode(GL_MODELVIEW);
+}
+
 void Scene::handleInput(float dt)
 {
-	if (input->isKeyDown('d') || input->isKeyDown('D'))
+
+	if (input->isKeyPressed('r') || input->isKeyPressed('R'))
 	{
-		camera->PanCamera(-0.2f *dt);
+		Restart();
 	}
 
-	if (input->isKeyDown('a') || input->isKeyDown('A'))
+	if (input->isKeyPressed('b') || input->isKeyPressed('B'))
 	{
-		camera->PanCamera(0.2f * dt);
+		if (newN >2)
+		{
+			newN--;
+		}
+	}
+	if (input->isKeyPressed('n') || input->isKeyPressed('N'))
+	{
+		newN++;
 	}
 
-
-	if (input->isKeyDown('i')|| input->isKeyDown('I'))
+	if (input->isKeyPressed('m') || input->isKeyPressed('M'))
 	{
-		camera->ZoomCamera(-100.0f * dt);
+		if (method == 4)
+		{
+			method = 0;
+		}
+		else
+		{
+			method++;
+		}
 	}
 
-
-	if (input->isKeyDown('o') || input->isKeyDown('O'))
+	if (input->isKeyPressed('l') || input->isKeyPressed('L'))
 	{
-		camera->ZoomCamera(+100.0f * dt);
+		timeStep += 0.1;
 	}
+	if (input->isKeyPressed('k') || input->isKeyPressed('K'))
+	{
+		if (timeStep > 0)
+		{
+			timeStep -= 0.1;
+		}
+		
+	}
+
+	if (input->isKeyPressed('o') || input->isKeyPressed('O'))
+	{
+		if (theta >= 0.1)
+		{
+			theta -= 0.1;
+		}
+
+	}
+	if (input->isKeyPressed('p') || input->isKeyPressed('P'))
+	{
+		if (theta < 1)
+		{
+			theta += 0.1;
+		}
+
+	}
+
+	if (input->isKeyPressed('o') || input->isKeyPressed('O'))
+	{
+		if (theta >= 0.1)
+		{
+			theta -= 0.1;
+		}
+
+	}
+	if (input->isKeyPressed('w') || input->isKeyPressed('W'))
+	{
+		runFor ++;
+	}
+	if (input->isKeyPressed('q') || input->isKeyPressed('Q"'))
+	{
+		if (runFor >1)
+		{
+			runFor--;
+		}
+		
+	}
+
 }
 
 void Scene::update(float dt)
@@ -102,13 +214,7 @@ void Scene::update(float dt)
 	updates++;
 
 	particleManager->Update(dt, timeStep);
-	if (updates == runFor)
-	{
-		std::ofstream outfile("output.txt");
 
-		outfile << "ran in" << std::endl;
-
-	}
 	//update camera
 	//camera->update();
 	
@@ -123,7 +229,7 @@ void Scene::resize(int w, int h)
 	if (h == 0)
 		h = 1;
 
-	float ratio = (float)w / (float)h;
+	ratio = (float)w / (float)h;
 	fov = 45.0f;
 	nearPlane = 0.1f;
 	farPlane = 10000000.0f;
@@ -146,15 +252,48 @@ void Scene::resize(int w, int h)
 
 }
 
+void Scene::Restart()
+{
+	particleManager->~ParticleManager();
+	particleManager = new ParticleManager(Vector3(10000.0f, 10000.0f, 10000.0f), g, newN, runFor, methodText[method]);
+	particleManager->InitDiskSystem(1500, 4000, 100);
+
+	time = 0;
+	updates = 0;
+
+	particleManager->InitMethod(method);
+}
+
 void Scene::ReadSetupFiles()
 {
 	std::ifstream file("setup.txt");
-	std::string a,b,c,d;
+	std::string temp, tempValue;
 
-
-
-	while (file >> a >> b >> c >> d);
+	std::string line;
+	while (std::getline(file, line))
 	{
-		method = 0;
+		std::istringstream iss(line);
+		if (!(iss >> temp >> tempValue)) { break; } // error
+		if (temp[0] == 'M')//method
+		{
+			method = std::stoi(tempValue);
+		}
+		else if (temp[0] == 'N')//N
+		{
+			newN = std::stoi(tempValue);
+		}
+		else if (temp[1] == 'I')//Timestep
+		{
+			timeStep = std::stof(tempValue);
+		}
+		else if (temp[0] == 'R')
+		{
+			runFor = std::stoi(tempValue);
+		}
+		else if (temp[1] == 'H')//Theta
+		{
+			theta = std::stof(tempValue);
+		}
 	}
 }
+
