@@ -103,7 +103,7 @@ void ParticleManager::InitMethod()
 	//solver = new VerletSolver(grav);
 	//solver  = new DirectGPU(n);
 	solver = new BHTree(grav, 0.5f, particlesArray, n);
-	//solver  = new RK4Solver(g);
+	solver  = new RK4Solver(grav);
 	//solver  = new EulerSolver(grav);
 }
 
@@ -115,6 +115,17 @@ Particle* ParticleManager::GetParticlesArray()
 void ParticleManager::Update(float dt, float timeStep)
 {
 	solver->Solve(particlesArray, 0.5, n);
+}
+
+float ParticleManager::SumEnergy()
+{
+	float energy;
+	float velocity;
+	for (int i = 0; i < n; i++)
+	{
+		velocity = particlesArray[i].velocity.length();
+		energy += 0.5 * particlesArray[i].mass * velocity * velocity;
+	}
 }
 	
 
