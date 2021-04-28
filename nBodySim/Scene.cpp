@@ -2,9 +2,6 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-//temp
-
-
 
 
 Scene::Scene(Input *inp)
