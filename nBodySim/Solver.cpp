@@ -4,13 +4,7 @@ Vector3 Solver::CalculateAcceleration(Vector3 posI, Vector3 posJ, float mass)
 {
 	
 	Vector3 diff = posI - posJ;
-
-	float dist = diff.length() + 0.1e-10; //get distance
-	if (dist < 1)
-	{
-		bool b;
-		b = true;
-	}
+	float dist = diff.length(); //get distance
 	float multiplier = (g * mass) / (dist * dist * dist); //multiplier  (g * mass )/ (distance ^3)
 	Vector3 acc = diff;
 	acc.scale(-multiplier); //return as negative as gravitational effect in negative

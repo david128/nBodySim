@@ -5,14 +5,10 @@
 class Camera
 {
 public:
-	Camera();
-	~Camera();
+
 
 	void PanCamera(float angle);
 	void ZoomCamera(float zoom);
-	void RotateX(float rotate);
-	void RotateY(float rotate);
-	void RotateZ(float rotate);
 
 	void setCameraPos(Vector3);
 	void setCameraLook(Vector3);
@@ -33,14 +29,6 @@ private:
 	float distanceToLook;
 	
 	float xzAngle = 0;
-
-	   	 
-
-	float Yaw = 0.0f;
-	float Pitch = 0.0f;
-	float Roll = 0.0f;
-	float mouseX, mouseY;
-
 	float degToRad = 3.1416 / 180.0f;
 };
 

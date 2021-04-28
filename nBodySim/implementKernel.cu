@@ -20,9 +20,9 @@ __global__ void EulerAcceleration(unsigned int n, Particle* pArray, float timeSt
 
 	for (int i = id; i < n; i += stride) //this will loop in i, incrementing by number of threads in parallel
 	{
-		acc[0] = 0;
-		acc[1] = 0;
-		acc[2] = 0;
+		acc[0] = 0.0f;
+		acc[1] = 0.0f;
+		acc[2] = 0.0f;
 		for (int j = 0; j < n; j++) //j loop that increments by 1 calculating acc in serial
 		{
 
@@ -36,7 +36,6 @@ __global__ void EulerAcceleration(unsigned int n, Particle* pArray, float timeSt
 
 
 				diff[0] = diff[0] * -multiplier;
-				diff[1] = diff[1] * -multiplier;
 				diff[1] = diff[1] * -multiplier;
 				diff[2] = diff[2] * -multiplier;
 
