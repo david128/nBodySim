@@ -192,7 +192,6 @@
     <ClCompile Include="VerletSolver.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BarnesHut.cuh" />
     <ClInclude Include="Direct.cuh">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
@@ -202,8 +201,6 @@
     <ClInclude Include="BHTree.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="DirectSolver.h" />
-    <ClInclude Include="NodeGPU.h" />
-    <ClInclude Include="NodeGPU.cuh" />
     <ClInclude Include="EulerSolver.h" />
     <ClInclude Include="implementKernel.cuh">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
@@ -221,7 +218,6 @@
     <ClInclude Include="VerletSolver.h" />
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="BarnesHut.cu" />
     <CudaCompile Include="Direct.cu">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <FileType>Document</FileType>

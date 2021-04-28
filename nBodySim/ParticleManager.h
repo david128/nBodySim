@@ -6,7 +6,7 @@
 #include "BHTree.h"
 
 #include "Direct.cuh"
-#include "BarnesHut.cuh"
+
 
 #include "RK4Solver.h"
 #include "EulerSolver.h"
