@@ -3,16 +3,20 @@
 
 BHTree::BHTree(float gravConst,float th, Particle* particles, int n)
 {
+	//set maxPos to initial 0
 	maxPos = 0;
 
+	
 	for (int i = 0; i < n; i++)
 	{
-		root.particles.push_back(&particles[i]);
+		root.particles.push_back(&particles[i]);//insert this particle to root
+		//find max extent of system
 		if (abs(particles[i].position.x) > maxPos) { maxPos = abs(particles[i].position.x);}
 		if (abs(particles[i].position.y) > maxPos) { maxPos = abs(particles[i].position.y);}
 		if (abs(particles[i].position.z) > maxPos) { maxPos = abs(particles[i].position.z);}
 	}
 
+	//set g and theta
 	root.particleCount = n;
 	g = gravConst;
 	theta = th;
@@ -23,16 +27,16 @@ BHTree::~BHTree()
 {
 }
 
-
-
 void BHTree::ConstructTree (Particle* particles, int n)
 {
-	
-	root.position = Vector3(0, 0, 0);
+
+	//set root pos to centre of system
+	root.position = Vector3(0.0f, 0.0f, 0.0f);
 	root.sideLegnth = maxPos * 2.0f;
-	
+
 	if (n > 1)
 	{
+		//start by splitting root node
 		SplitNode(&root);
 	}
 	
@@ -41,6 +45,7 @@ void BHTree::ConstructTree (Particle* particles, int n)
 
 void BHTree::DeleteTree()
 {
+	//if root has children start delete process at root
 	if (root.children.size() != 0)
 	{
 		DeleteNode(&root);
@@ -116,23 +121,23 @@ void BHTree::UpdatePositions(Particle* particles, float timeStep, int n)
 
 void BHTree::Solve(Particle* particles, float timeStep, int n)
 {
-	DeleteTree();
-	ConstructTree(particles, n);
-	CalculateForces(particles,n, timeStep);
-	UpdatePositions(particles, timeStep, n);
+	DeleteTree(); //delete previous tree
+	ConstructTree(particles, n); //construct tree based on particles
+	CalculateForces(particles,n, timeStep); //calculate forces, approximating based on tree
+	UpdatePositions(particles, timeStep, n); //update positions using euler
 
 }
 
 void BHTree::SplitNode(Node* currentNode)
 {
 	
-	float halfSide = currentNode->sideLegnth * 0.5f;
+	float halfSide = currentNode->sideLegnth * 0.5f; //find half side 
 	
 	//create 8 nodes
 	for (int i = 0; i < 8; i++)
 	{
 		currentNode->children.push_back(new Node());
-		currentNode->children[i]->sideLegnth = halfSide;
+		currentNode->children[i]->sideLegnth = halfSide; //set l to 05* parents side
 		
 	}
 	float quarterSide = halfSide * 0.5f;
@@ -153,10 +158,11 @@ void BHTree::SplitNode(Node* currentNode)
 					
 		//find child index
 		childIndex = 0;
-		if (currentNode->position.x < currentNode->particles.at(i)->position.x) { childIndex = 1; } //0,
+		if (currentNode->position.x < currentNode->particles.at(i)->position.x) { childIndex = 1; } 
 		if (currentNode->position.y < currentNode->particles.at(i)->position.y) { childIndex |= 2; }
 		if (currentNode->position.z < currentNode->particles.at(i)->position.z) { childIndex |= 4; }
 
+		//insert this particle
 		currentNode->children[childIndex]->particleCount++;
 		currentNode->children[childIndex]->particles.push_back(currentNode->particles[i]);
 
@@ -174,7 +180,8 @@ void BHTree::SplitNode(Node* currentNode)
 			}
 			else if (currentNode->children[i]->particleCount == 1)
 			{
-				currentNode->children[i]->combinedMass = currentNode->children[i]->particles.at(0)->mass;
+				//only one node
+				currentNode->children[i]->combinedMass = currentNode->children[i]->particles.at(0)->mass; 
 				currentNode->children[i]->averagePos = currentNode->children[i]->particles.at(0)->position;
 			}
 			else
@@ -190,7 +197,7 @@ void BHTree::SplitNode(Node* currentNode)
 				//find weighted average
 				currentNode->children[i]->averagePos.scale(1.0f / currentNode->children[i]->combinedMass); 
 
-				SplitNode(currentNode->children[i]); //further split node until 1 or 0 particles
+				SplitNode(currentNode->children[i]); //further split node until 1 or 0 particles in children
 				
 			}
 	}

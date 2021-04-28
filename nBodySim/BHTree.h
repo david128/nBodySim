@@ -4,7 +4,7 @@
 #include "Particle.h"
 #include "Solver.h"
 
-
+//node structure for tree
 struct Node {
     int particleCount;
     std::vector<Node*> children;
@@ -22,8 +22,7 @@ public:
 
     BHTree(float gravConst, float th, Particle* particles, int n);
     ~BHTree();
-
-
+    
     void ConstructTree(Particle* particles, int n);
     void SplitNode(Node* currentNode);
     void DeleteNode(Node* currentNode);
@@ -38,7 +37,6 @@ protected:
 
     float theta;
     Node root;
-    Vector3 extents;
     float maxPos;
 };
 
