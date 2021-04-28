@@ -82,13 +82,13 @@ void ParticleManager::InitDiskSystem(float minR,float maxR, float height)
 	{
 
 		//theta = random?
-		float theta = FindRandomSize(0, 360);
+		float theta = FindRandomFloat(0.0f,360.0f);
 		//random radius
-		float r = FindRandomSize(minR,maxR);
-		float h = FindRandomSize(-height,height);
+		float r = FindRandomFloat(minR,maxR);
+		float h = FindRandomFloat(-height,height);
 		float v =  sqrt((grav * largeMass) / r);
 
-		newP = new Particle(50, Vector3(r*cosf(theta), r * sinf(theta),height), smallMass = 10, Vector3(v*sinf(theta), -v*cosf(theta), 0));
+		newP = new Particle(50, Vector3(r*cosf(theta), r * sinf(theta),0), smallMass = 10, Vector3(v*sinf(theta), -v*cosf(theta), 0));
 		particlesArray[i] = *newP;
 
 	}
@@ -185,7 +185,9 @@ float ParticleManager::FindRandomSize(int min, int max)
 	return float(rand() % max + min);  //rand size between 50 and 300
 }
 
-
+float ParticleManager::FindRandomFloat(float min, float max) {
+	return min + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (max - min)));
+}
 
 Vector3 ParticleManager::FindRandomPos()
 {

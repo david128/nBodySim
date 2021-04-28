@@ -241,8 +241,7 @@ void Scene::Restart()
 {
 	particleManager->~ParticleManager();
 	particleManager = new ParticleManager(Vector3(10000.0f, 10000.0f, 10000.0f), g, newN, runFor, methodText[method]);
-	particleManager->InitDiskSystem(500, 500 + newN * 10, 100);
-
+	particleManager->InitDiskSystem(500, 500 + newN * 20, 100);
 	time = 0;
 	updates = 0;
 

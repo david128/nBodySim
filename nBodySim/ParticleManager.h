@@ -27,6 +27,8 @@ public:
 	void InitTestSystem();
 	void InitDiskSystem(float minR, float maxR, float height);
 
+
+
 	void InitMethod(int m);
 
 	Particle* GetParticlesArray();
@@ -56,6 +58,7 @@ private:
 	Vector3 FindRandomPos();
 	Vector3 FindRandomVel(int maxSpeed);
 	float FindVolume(float radius);
+	float FindRandomFloat(float min,float max);
 
 	std::vector<float> recordEnergy;
 	std::vector<float> recordTime;

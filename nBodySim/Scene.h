@@ -63,6 +63,9 @@ private:
 	std::string runForText;
 	std::string nText;
 
+
+	
+
 public:
 	Scene(Input* inp);
 	// render function
