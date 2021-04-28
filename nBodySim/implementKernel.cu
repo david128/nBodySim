@@ -38,11 +38,12 @@ void EulerAcceleration(unsigned int n, Particle* pArray, float timeStep)
 				diff[0] = pArray[i].position.x - pArray[j].position.x;
 				diff[1] = pArray[i].position.y - pArray[j].position.y;
 				diff[2] = pArray[i].position.z - pArray[j].position.z;
-				dist = sqrtf(diff[0] * diff[0] + diff[1] * diff[1] + diff[2] * diff[2]); //get distance
+				dist = sqrtf(diff[0] * diff[0] + diff[1] * diff[1] + diff[2] * diff[2]) + 0.1e-20; //get distance
 				multiplier = (g * pArray[j].mass) / (dist * dist * dist); //multiplier  (g * mass )/ (distance ^3)
 
 
 				diff[0] = diff[0] * -multiplier;
+				diff[1] = diff[1] * -multiplier;
 				diff[1] = diff[1] * -multiplier;
 				diff[2] = diff[2] * -multiplier;
 

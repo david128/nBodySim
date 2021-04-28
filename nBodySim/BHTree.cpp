@@ -27,12 +27,10 @@ BHTree::~BHTree()
 
 void BHTree::ConstructTree (Particle* particles, int n)
 {
-
-
+	
 	root.position = Vector3(0, 0, 0);
 	root.sideLegnth = maxPos * 2.0f;
 	
-
 	if (n > 1)
 	{
 		SplitNode(&root);
@@ -56,7 +54,6 @@ void BHTree::CalculateForces(Particle* particles, int n, float timeStep)
 	for (int i = 0; i < n; i++) //for all particles find forces applied
 	{
 		TraversNode(&particles[i], theta,&root, timeStep);//start at root
-
 	}
 
 }
@@ -136,7 +133,6 @@ void BHTree::SplitNode(Node* currentNode)
 	{
 		currentNode->children.push_back(new Node());
 		currentNode->children[i]->sideLegnth = halfSide;
-		//currentNode->children[i]->FindLocalPosition(i, parentCentre);
 		
 	}
 	float quarterSide = halfSide * 0.5f;

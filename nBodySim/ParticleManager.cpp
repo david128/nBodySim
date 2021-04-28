@@ -126,6 +126,13 @@ Particle* ParticleManager::GetParticlesArray()
 
 void ParticleManager::Update(float dt, float timeStep)
 {
+	//sum energy to check accuracy
+	if (ran == sum * 10)
+	{
+		recordEnergy.push_back(SumEnergy());
+		sum++;
+	}
+
 	//record time
 	auto start = std::chrono::high_resolution_clock::now();
 	//solve
@@ -135,11 +142,7 @@ void ParticleManager::Update(float dt, float timeStep)
 	auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
 	std::cout<< "Ran in "<<  duration.count() << " microseconds."<<  std::endl;
 
-	if (ran == sum* 10)
-	{
-		recordEnergy.push_back(SumEnergy());
-		sum++;
-	}
+
 	ran++;
 	recordTime.push_back(duration.count());
 	if (ran == runFor)
@@ -165,7 +168,7 @@ float ParticleManager::SumEnergy()
 			{
 				//PE
 				dist = Vector3(particlesArray[j].position - particlesArray[i].position).length();
-				energy -= grav * particlesArray[i].mass * particlesArray[j].mass / dist;
+				energy += grav * particlesArray[i].mass * particlesArray[j].mass / dist;
 			}
 		}
 	}

@@ -55,7 +55,7 @@ private:
 	int method =0;
 	int runFor= 1000;
 	float theta = 0.5f;
-	
+	float zoom;
 
 	std::string methodText[5];
 	std::string timeStepText;

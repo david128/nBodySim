@@ -36,12 +36,10 @@ Scene::Scene(Input *inp)
 	particleManager = new ParticleManager(Vector3(10000.0f, 10000.0f, 10000.0f), g, newN, runFor, methodText[method]);
 
 	//particleManager->InitSystem();
-	particleManager->InitDiskSystem(1500,4000,100);
+	particleManager->InitDiskSystem(500,500+ newN * 20,100);
 	//particleManager->InitTestSystem();
 
 	particleManager->InitMethod(method);
-
-
 	InitCamera();
 	
 }
@@ -49,12 +47,15 @@ Scene::Scene(Input *inp)
 void Scene::InitCamera()
 {
 	//set camera 
+
+	zoom = 2000 + newN * 40;
+	
 	camera = new Camera();
 	camera->setXzAngle(90.0f);
 	camera->setCameraLook(Vector3(0.0f, 0.0f, 0.0f));
-	camera->setCameraPos(Vector3(0.0f, 0.0f, 20000));
+	camera->setCameraPos(Vector3(0.0f, 0.0f, zoom));
 	camera->setCameraUp(Vector3(0, 1, 0));
-	camera->SetDistanceToLook(20000.0f);
+	camera->SetDistanceToLook(zoom);
 
 }
 
@@ -71,12 +72,15 @@ void Scene::render(float dt)
 	runForText = ("Run For:" + std::to_string(runFor));
 	thetaText = ("Theta :" + std::to_string(theta));
 	
+	float x = -1000 * zoom / 2000 /ratio;
+	float y = 1000 * zoom / 2000 /ratio;
+	
 
-	RenderString((width * -14.0f)/ratio, (height * 15.0f) / ratio,methodText[method]);
-	RenderString((width * -14.0f)/ratio, (height * 14.0f) / ratio,nText);
-	RenderString((width * -14.0f)/ratio, (height * 13.0f) / ratio, timeStepText);
-	RenderString((width * -14.0f)/ratio, (height * 12.0f) / ratio, runForText);
-	RenderString((width * -14.0f)/ratio, (height * 11.0f) / ratio, thetaText);
+	RenderString(x, y,methodText[method]);
+	RenderString(x, y* 0.9,nText);
+	RenderString(x, y* 0.8, timeStepText);
+	RenderString(x, y* 0.7, runForText);
+	RenderString(x, y* 0.6, thetaText);
 
 	
 	
@@ -96,29 +100,13 @@ void Scene::render(float dt)
 
 void Scene::RenderString(float x, float y, std::string string)
 {
-	// Need to use 2D
-	//glMatrixMode(GL_PROJECTION);
-	//glLoadIdentity();
-	//glOrtho(-1.0, 1.0, -1.0, 1.0, 5, 100);
-	//glMatrixMode(GL_MODELVIEW);
-	//glLoadIdentity();
-	//gluLookAt(0.0f, 0.0f, 10.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-
 	glRasterPos2f(x,y);
-
-	//char* c = string.c_str;
-	// Render text.
 	for (int i = 0; i < string.size(); i++)
 	{
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, string[i]);
 	}
 
 
-	// back to 3D
-	//glMatrixMode(GL_PROJECTION);
-	//glLoadIdentity();
-	//gluPerspective(fov, ((float)width / (float)height), nearPlane, farPlane);
-	//glMatrixMode(GL_MODELVIEW);
 }
 
 void Scene::handleInput(float dt)
@@ -256,12 +244,13 @@ void Scene::Restart()
 {
 	particleManager->~ParticleManager();
 	particleManager = new ParticleManager(Vector3(10000.0f, 10000.0f, 10000.0f), g, newN, runFor, methodText[method]);
-	particleManager->InitDiskSystem(1500, 4000, 100);
+	particleManager->InitDiskSystem(500, 500 + newN * 10, 100);
 
 	time = 0;
 	updates = 0;
 
 	particleManager->InitMethod(method);
+	InitCamera();
 }
 
 void Scene::ReadSetupFiles()
