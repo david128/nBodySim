@@ -127,7 +127,7 @@ void ParticleManager::Update(float dt, float timeStep)
 
 	//find time
 	auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-	std::cout<< "Run "<< ran << "ran in "<<  duration.count() << " microseconds."<<  std::endl;
+	std::cout<< "Run "<< ran << " ran in "<<  duration.count() << " microseconds."<<  std::endl;
 
 
 	ran++;
