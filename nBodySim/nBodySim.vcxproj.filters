@@ -7,7 +7,6 @@
   <ItemGroup>
     <ClCompile Include="BHTree.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="DirectSolver.cpp" />
     <ClCompile Include="EulerSolver.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="main.cpp" />
@@ -23,7 +22,6 @@
     <ClInclude Include="Direct.cuh" />
     <ClInclude Include="BHTree.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="DirectSolver.h" />
     <ClInclude Include="EulerSolver.h" />
     <ClInclude Include="implementKernel.cuh" />
     <ClInclude Include="Input.h" />

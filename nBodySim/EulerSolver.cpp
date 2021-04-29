@@ -10,7 +10,6 @@ void EulerSolver::Solve(Particle* particles, float timeStep, int n)
 {
 	//update vel every time step
 	//loop all particles
-
 	for (int i = 0; i < n; i++)
 	{
 		//loop all particles 

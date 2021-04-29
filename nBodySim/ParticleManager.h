@@ -2,11 +2,8 @@
 #include "Particle.h"
 #include <vector>
 #include "Vector3.h"
-#include "DirectSolver.h"
 #include "BHTree.h"
-
 #include "Direct.cuh"
-
 
 #include "RK4Solver.h"
 #include "EulerSolver.h"

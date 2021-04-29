@@ -9,7 +9,7 @@
 #include "Input.h"
 #include "Particle.h"
 #include "ParticleManager.h"
-#include "DirectSolver.h"
+
 
 #include <vector>
 #include <sstream>
@@ -53,7 +53,8 @@ private:
 	
 	int newN = 0;
 	int method =0;
-	int runFor= 1000;
+	int runFor = 0;
+	int runForNext;
 	float theta = 0.5f;
 	float zoom;
 

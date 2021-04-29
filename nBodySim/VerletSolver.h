@@ -5,7 +5,6 @@ class VerletSolver :
 {
 public:
 	VerletSolver(float grav);
-
 	void Solve(Particle* particles, float timeStep, int n);
 };
 

@@ -24,8 +24,8 @@ void DirectGPU::Solve(Particle* particles, float timeStep, int n)
 
 void DirectGPU::InitDevice(int n)
 {
-	threadsPerBlock = 256;
-	numberOfBlocks = (n + threadsPerBlock - 1) / threadsPerBlock;
+	threadsPerBlock = 256; 
+	numberOfBlocks = (n + threadsPerBlock - 1) / threadsPerBlock; //find appropriate number of blocks
 }
 
 

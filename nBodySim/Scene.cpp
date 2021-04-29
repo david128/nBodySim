@@ -16,6 +16,7 @@ Scene::Scene(Input *inp)
 
 	ReadSetupFiles();
 	
+
 	//OpenGL settings
 	glShadeModel(GL_SMOOTH);							// Enable Smooth Shading
 	glClearColor(0.39f, 0.58f, 93.0f, 1.0f);			// Cornflour Blue Background
@@ -31,11 +32,7 @@ Scene::Scene(Input *inp)
 
 
 	particleManager = new ParticleManager(Vector3(10000.0f, 10000.0f, 10000.0f), g, newN, runFor, methodText[method]);
-
-	//particleManager->InitSystem();
 	particleManager->InitDiskSystem(500,500+ newN * 20,100);
-	//particleManager->InitTestSystem();
-
 	particleManager->InitMethod(method);
 	InitCamera();
 	
@@ -66,7 +63,7 @@ void Scene::render(float dt)
 
 	nText = ("N :" + std::to_string(newN));
 	timeStepText = ("Time Step:" + std::to_string(timeStep));
-	runForText = ("Run For:" + std::to_string(runFor));
+	runForText = ("Run For:" + std::to_string(runForNext));
 	thetaText = ("Theta :" + std::to_string(theta));
 	
 	float x = -1000 * zoom / 2000 /ratio;
@@ -178,13 +175,13 @@ void Scene::handleInput(float dt)
 	}
 	if (input->isKeyPressed('w') || input->isKeyPressed('W'))
 	{
-		runFor ++;
+		runForNext++;
 	}
 	if (input->isKeyPressed('q') || input->isKeyPressed('Q"'))
 	{
 		if (runFor >1)
 		{
-			runFor--;
+			runForNext--;
 		}
 		
 	}
@@ -239,11 +236,13 @@ void Scene::resize(int w, int h)
 
 void Scene::Restart()
 {
+	runFor = runForNext;
 	particleManager->~ParticleManager();
 	particleManager = new ParticleManager(Vector3(10000.0f, 10000.0f, 10000.0f), g, newN, runFor, methodText[method]);
 	particleManager->InitDiskSystem(500, 500 + newN * 20, 100);
 	time = 0;
 	updates = 0;
+
 
 	particleManager->InitMethod(method);
 	InitCamera();
@@ -274,6 +273,7 @@ void Scene::ReadSetupFiles()
 		else if (temp[0] == 'R')
 		{
 			runFor = std::stoi(tempValue);
+			runForNext = runFor;//changable v
 		}
 		else if (temp[1] == 'H')//Theta
 		{

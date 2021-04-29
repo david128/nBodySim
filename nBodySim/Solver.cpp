@@ -14,7 +14,6 @@ Vector3 Solver::CalculateAcceleration(Vector3 posI, Vector3 posJ, float mass)
 Solver::Solver()
 {
 	time = 0.0f;
-
 }
 
 bool Solver::Update(float dt, float timeStep)

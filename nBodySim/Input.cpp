@@ -32,34 +32,3 @@ bool Input::isKeyPressed(int key)
 		return false;
 	}
 }
-
-void Input::setMouseX(int x )
-{
-}
-
-void Input::setMouseY(int y)
-{
-}
-
-void Input::setMousePos(int x, int y)
-{
-}
-
-int Input::getMouseX()
-{
-	return 0;
-}
-
-int Input::getMouseY()
-{
-	return 0;
-}
-
-void Input::setLeftMouseButton(bool b)
-{
-}
-
-bool Input::isLeftMouseButtonPressed()
-{
-	return false;
-}

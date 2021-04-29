@@ -14,11 +14,8 @@ void VerletSolver::Solve(Particle* particles, float timeStep, int n)
 		currentVdt.scale(timeStep);
 
 		 // a(t) /2 * h
-
-
 		Vector3 halfADt2 = particles[i].acceleration;
 		halfADt2.scale(0.5f * timeStep * timeStep);
-
 		particles[i].position = particles[i].position + currentVdt + halfADt2;
 	}
 
@@ -39,12 +36,12 @@ void VerletSolver::Solve(Particle* particles, float timeStep, int n)
 
 		}
 
-
+		//accelerations
 		Vector3 halfAccDt = particles[i].acceleration;
 		halfAccDt.scale(0.5f * timeStep);
 		particles[i].velocity += halfAccDt;
 
-		particles[i].acceleration = acc;
+		particles[i].acceleration = acc;//update acceleration
 		halfAccDt = particles[i].acceleration;
 		halfAccDt.scale(0.5f * timeStep);
 		particles[i].velocity += halfAccDt;

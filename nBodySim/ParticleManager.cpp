@@ -6,9 +6,6 @@
 #include <iostream>
 #include <fstream>
 
-//#include "cuda_runtime.h"
-//#include "cuda.h"
-
 
 ParticleManager::ParticleManager(Vector3 extents, float g, int numberOfParticles, int rf, std::string mN)
 {
@@ -38,7 +35,6 @@ Particle* ParticleManager::CreateRandomParticle()
 	
 	//create new particle
 	Particle* p = new Particle();
-
 	p->size = FindRandomSize(50, 100); //set size between 50 and 300
 	p->mass = FindVolume(p->size); // set mass to volume
 	p->position = FindRandomPos();
@@ -47,10 +43,9 @@ Particle* ParticleManager::CreateRandomParticle()
 	return p;
 }
 
-
+//places particles in random places
 void ParticleManager::InitSystem()
 {
-	
 	srand(time(NULL));
 	for (int i = 0; i < n; i++)
 	{
@@ -60,32 +55,22 @@ void ParticleManager::InitSystem()
 
 }	
 
-void ParticleManager::InitTestSystem()
-{
-	Particle* p1 = new Particle(10, Vector3(0.0f, 0.0f, 0.0f), 60000000000000, Vector3(0.0f, 0.0f, 0.0f));
-	Particle* p2 = new Particle(5, Vector3(0.0f, 35.0f, 0.0f), 50, Vector3(10.5f, 0.0f, 0.0f));
-	particlesArray[0] = *p1;
-	particlesArray[1] = *p2;
-
-
-}
-
+//places particles in random disk system
 void ParticleManager::InitDiskSystem(float minR,float maxR, float height)
 {
 	Particle* newP; 
-	float largeMass = 1000000000000000000.0;
-	float smallMass = 1;
+	float largeMass = 1000000000000000000.0; //large mass
+	float smallMass = 1; //mass of smaller 
 	newP = new Particle(100, Vector3(0.0f, 0.0f, 0.0f),largeMass, Vector3(0.0f, 0.0f, 0.0f));
-	particlesArray[0] = *newP;
+	particlesArray[0] = *newP; //large mass particles orbit round
 
 	for (int i = 1; i < n; i++)
 	{
 
-		//theta = random?
+		//theta = random float
 		float theta = FindRandomFloat(0.0f,360.0f);
 		//random radius
 		float r = FindRandomFloat(minR,maxR);
-		float h = FindRandomFloat(-height,height);
 		float v =  sqrt((grav * largeMass) / r);
 
 		newP = new Particle(50, Vector3(r*cosf(theta), r * sinf(theta),0), smallMass = 10, Vector3(v*sinf(theta), -v*cosf(theta), 0));
@@ -96,6 +81,7 @@ void ParticleManager::InitDiskSystem(float minR,float maxR, float height)
 
 void ParticleManager::InitMethod(int m)
 {
+	//passed an int and chooses how to solve
 	if (m ==1)
 	{
 		solver = new RK4Solver(grav);
@@ -139,13 +125,14 @@ void ParticleManager::Update(float dt, float timeStep)
 	solver->Solve(particlesArray, timeStep, n);
 	auto stop = std::chrono::high_resolution_clock::now();
 
+	//find time
 	auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
 	std::cout<< "Ran in "<<  duration.count() << " microseconds."<<  std::endl;
 
 
 	ran++;
 	recordTime.push_back(duration.count());
-	if (ran == runFor)
+	if (ran == runFor) 
 	{
 		PrintResults(timeStep);
 	}
@@ -154,6 +141,7 @@ void ParticleManager::Update(float dt, float timeStep)
 
 float ParticleManager::SumEnergy()
 {
+	//sums PE + KE to find total energy of system which should be constant
 	float energy = 0;
 	float velocity;
 	float dist;

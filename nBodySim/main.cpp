@@ -33,9 +33,6 @@ void render(void)
 	oldTimeSinceStart = timeSinceStart;
 	deltaTime = deltaTime / 100.0f;
 
-	//clears buffer
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 	scene->handleInput(deltaTime);
 	scene->update(deltaTime);
 	scene->render(deltaTime);
@@ -51,15 +48,10 @@ int	main(int argc, char** argv)
 	glutCreateWindow("N-Body dynamics");
 
 	//input
-	//keys
 	glutKeyboardFunc(handleKeyboard);
 	glutKeyboardUpFunc(handleKeyboardUp);
 
-	//mouse
-	/*glutMotionFunc();
-	glutPassiveMotionFunc();
-	glutMouseFunc();*/
-
+	//display
 	glutDisplayFunc(render);
 	glutReshapeFunc(changeSize);
 	glutIdleFunc(render);
@@ -67,6 +59,7 @@ int	main(int argc, char** argv)
 	input = new Input();
 	scene = new Scene(input);
 
+	//starts main loop
 	glutMainLoop();
 
 	
