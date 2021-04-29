@@ -225,7 +225,7 @@ void ParticleManager::PrintResults(float timeStep)
 		}
 	}
 
-	fileName = "./output/" + methodName + "_TS_" + ts + "_RF_" + std::to_string(runFor) + "_times.csv";
+	fileName = "./output/"+ std::to_string(n) +  "bodies_" + methodName + "_TS_" + ts + "_RF_" + std::to_string(runFor) + "_times.csv";
 	outFile.open(fileName);//open this file
 
 	for (int i = 0; i < recordTime.size(); i++) //loop through each item in array and write to file
@@ -236,7 +236,7 @@ void ParticleManager::PrintResults(float timeStep)
 	outFile.close();//close file
 
 
-	fileName = "./output/" + methodName + "_TS_" + ts + "_RF_" + std::to_string(runFor) + "_energy.csv";
+	fileName = "./output/" + std::to_string(n) + "bodies_" + methodName + "_TS_" + ts + "_RF_" + std::to_string(runFor) + "_energy.csv";
 	outFile.open(fileName);//open this file
 
 
