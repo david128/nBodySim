@@ -18,15 +18,12 @@ public:
 	~ParticleManager();
 
 	Particle* CreateRandomParticle();
-	void AddParticle(Particle* part);
-
 	void InitSystem();
-	void InitTestSystem();
 	void InitDiskSystem(float minR, float maxR, float height);
 
 
 
-	void InitMethod(int m);
+	void InitMethod(int m, float th);
 
 	Particle* GetParticlesArray();
 	
@@ -43,6 +40,7 @@ private:
 	int sum = 0;
 	int ran;
 	int runFor;
+	float theta;
 	std::string methodName;
 
 	float grav;

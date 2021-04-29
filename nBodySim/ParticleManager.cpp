@@ -80,7 +80,7 @@ void ParticleManager::InitDiskSystem(float minR,float maxR, float height)
 	}
 }
 
-void ParticleManager::InitMethod(int m)
+void ParticleManager::InitMethod(int m, float th)
 {
 	//passed an int and chooses how to solve
 	if (m ==1)
@@ -93,7 +93,8 @@ void ParticleManager::InitMethod(int m)
 	}
 	else if (m ==3)
 	{
-		solver = new BHTree(grav, 0.5f, particlesArray, n);
+		theta = th;
+		solver = new BHTree(grav, theta, particlesArray, n);
 	}
 	else if (m == 4)
 	{
@@ -215,6 +216,24 @@ void ParticleManager::PrintResults(float timeStep)
 	std::ofstream outFile;
 	std::string fileName;
 	std::string ts;
+	std::string th = "";
+
+	//add th if method is bh
+	if (methodName == "Barnes_Hut")
+	{
+		th = "_theta_" + std::to_string(theta)  + "_";
+		//convert . in ts to _ for file name
+		for (int i = 0; i < th.size(); i++)
+		{
+			if (th[i] == '.')
+			{
+				th[i] = '_';
+			}
+		}
+	}
+
+
+
 	ts = std::to_string(timeStep);
 	//convert . in ts to _ for file name
 	for (int i = 0; i < ts.size(); i++)
@@ -225,7 +244,9 @@ void ParticleManager::PrintResults(float timeStep)
 		}
 	}
 
-	fileName = "./output/"+ std::to_string(n) +  "bodies_" + methodName + "_TS_" + ts + "_RF_" + std::to_string(runFor) + "_times.csv";
+
+	fileName = "./output/"+ std::to_string(n) +  "bodies_" + methodName + th+ "_TS_" + ts + "_RF_" + std::to_string(runFor) + "_times.csv";
+
 	outFile.open(fileName);//open this file
 
 	for (int i = 0; i < recordTime.size(); i++) //loop through each item in array and write to file

@@ -33,7 +33,7 @@ Scene::Scene(Input *inp)
 	//set up system using paramaters from file
 	particleManager = new ParticleManager(Vector3(10000.0f, 10000.0f, 10000.0f), g, newN, runFor, methodText[method]);
 	particleManager->InitDiskSystem(500,500+ newN * 20,100);
-	particleManager->InitMethod(method);
+	particleManager->InitMethod(method, theta);
 	InitCamera();
 	
 }
@@ -238,7 +238,7 @@ void Scene::Restart()
 	updates = 0;
 
 
-	particleManager->InitMethod(method);
+	particleManager->InitMethod(method, theta);
 	InitCamera();
 }
 
