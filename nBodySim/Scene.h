@@ -27,37 +27,31 @@ class Scene
 {
 	
 private:
-	/*Particle* particle;
-	Particle* particle2;
-	Particle* particle3;
-	Particle* particle4;
-	std::vector<Particle*> particles;*/
 	
 	ParticleManager* particleManager;
-	
 	Camera* camera;
 	Input* input; 
 
 	
-	// For Window and frustum calculation.
+	// For Window calculation.
 	int width, height;
 	float fov, ratio, nearPlane, farPlane;
-
 	float time = 1.0f; // set so will be calculated at start
 	
 	float g = 6.67408e-11f; //grav constant
-
 	float timeStep = 0.5f;
 
+	//simulation paramaters, set to some default values in case read file fails
 	int updates = 0;
-	
-	int newN = 0;
+	int newN = 2;
+	int methodNext = 0;
 	int method =0;
-	int runFor = 0;
-	int runForNext;
+	int runFor = 100;
+	int runForNext =100;
 	float theta = 0.5f;
 	float zoom;
 
+	//for ui
 	std::string methodText[5];
 	std::string timeStepText;
 	std::string thetaText;
@@ -82,6 +76,5 @@ public:
 	void ReadSetupFiles();
 	void RenderString(float x, float y, std::string string);
 	void InitCamera();
-	void MoveCamera();
 };
 

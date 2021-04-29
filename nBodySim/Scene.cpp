@@ -30,7 +30,7 @@ Scene::Scene(Input *inp)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);	//blend function settings
 
 
-
+	//set up system using paramaters from file
 	particleManager = new ParticleManager(Vector3(10000.0f, 10000.0f, 10000.0f), g, newN, runFor, methodText[method]);
 	particleManager->InitDiskSystem(500,500+ newN * 20,100);
 	particleManager->InitMethod(method);
@@ -40,10 +40,8 @@ Scene::Scene(Input *inp)
 
 void Scene::InitCamera()
 {
-	//set camera 
-
-	zoom = 2000 + newN * 40;
-	
+	//set camera to appropriate distance
+	zoom = 2000 + newN * 40;	
 	camera = new Camera();
 	camera->setXzAngle(90.0f);
 	camera->setCameraLook(Vector3(0.0f, 0.0f, 0.0f));
@@ -66,26 +64,23 @@ void Scene::render(float dt)
 	runForText = ("Run For:" + std::to_string(runForNext));
 	thetaText = ("Theta :" + std::to_string(theta));
 	
+	//x and y pos for text
 	float x = -1000 * zoom / 2000 /ratio;
 	float y = 1000 * zoom / 2000 /ratio;
 	
-
-	RenderString(x, y,methodText[method]);
+	//render ui
+	RenderString(x, y,methodText[methodNext]);
 	RenderString(x, y* 0.9,nText);
 	RenderString(x, y* 0.8, timeStepText);
 	RenderString(x, y* 0.7, runForText);
-	RenderString(x, y* 0.6, thetaText);
-
+	if (methodNext == 3){RenderString(x, y * 0.6, thetaText);}
 	
-	
-
-
+	//draw all particles
 	Particle* particles = particleManager->GetParticlesArray();
 	for (int i = 0; i < particleManager->n; i++)
 	{
 		particles[i].DrawParticle();
 	}
-
 
 
 	glutSwapBuffers();
@@ -94,6 +89,7 @@ void Scene::render(float dt)
 
 void Scene::RenderString(float x, float y, std::string string)
 {
+	//render string at x,y pos
 	glRasterPos2f(x,y);
 	for (int i = 0; i < string.size(); i++)
 	{
@@ -105,12 +101,12 @@ void Scene::RenderString(float x, float y, std::string string)
 
 void Scene::handleInput(float dt)
 {
-
+	//key inputs
 	if (input->isKeyPressed('r') || input->isKeyPressed('R'))
 	{
 		Restart();
 	}
-
+	//n and b change number of bodies
 	if (input->isKeyPressed('b') || input->isKeyPressed('B'))
 	{
 		if (newN >2)
@@ -123,18 +119,20 @@ void Scene::handleInput(float dt)
 		newN++;
 	}
 
+	// m changes method
 	if (input->isKeyPressed('m') || input->isKeyPressed('M'))
 	{
-		if (method == 4)
+		if (methodNext == 4)
 		{
-			method = 0;
+			methodNext = 0;
 		}
 		else
 		{
-			method++;
+			methodNext++;
 		}
 	}
 
+	//l and k change timestep
 	if (input->isKeyPressed('l') || input->isKeyPressed('L'))
 	{
 		timeStep += 0.1;
@@ -148,31 +146,29 @@ void Scene::handleInput(float dt)
 		
 	}
 
-	if (input->isKeyPressed('o') || input->isKeyPressed('O'))
+	//o and p change value of theta, only needed if method is BH
+	if (methodNext == 3)
 	{
-		if (theta >= 0.1)
+		if (input->isKeyPressed('o') || input->isKeyPressed('O'))
 		{
-			theta -= 0.1;
-		}
+			if (theta >= 0.1)
+			{
+				theta -= 0.1;
+			}
 
-	}
-	if (input->isKeyPressed('p') || input->isKeyPressed('P'))
-	{
-		if (theta < 1)
+		}
+		if (input->isKeyPressed('p') || input->isKeyPressed('P'))
 		{
-			theta += 0.1;
-		}
+			if (theta < 3)
+			{
+				theta += 0.1;
+			}
 
+		}
 	}
 
-	if (input->isKeyPressed('o') || input->isKeyPressed('O'))
-	{
-		if (theta >= 0.1)
-		{
-			theta -= 0.1;
-		}
 
-	}
+	//w and q to change how many times to run
 	if (input->isKeyPressed('w') || input->isKeyPressed('W'))
 	{
 		runForNext++;
@@ -195,19 +191,16 @@ void Scene::update(float dt)
 	time += dt;
 	updates++;
 
+	//update simulation
 	particleManager->Update(dt, timeStep);
-
-	//update camera
-	//camera->update();
-	
+	   	
 }
 
 void Scene::resize(int w, int h)
 {
 	width = w;
 	height = h;
-	// Prevent a divide by zero, when window is too short
-	// (you cant make a window of zero width).
+	// stop /0
 	if (h == 0)
 		h = 1;
 
@@ -216,19 +209,16 @@ void Scene::resize(int w, int h)
 	nearPlane = 0.1f;
 	farPlane = 10000000.0f;
 
-	// Use the Projection Matrix
+	// Projection Matrix
 	glMatrixMode(GL_PROJECTION);
 
-	// Reset Matrix
 	glLoadIdentity();
 
-	// Set the viewport to be the entire window
+	// Set the viewport
 	glViewport(0, 0, w, h);
 
-	// Set the correct perspective.
 	gluPerspective(fov, ratio, nearPlane, farPlane);
 
-	// Get Back to the Modelview
 	glMatrixMode(GL_MODELVIEW);
 
 
@@ -237,6 +227,7 @@ void Scene::resize(int w, int h)
 void Scene::Restart()
 {
 	runFor = runForNext;
+	method = methodNext;
 	particleManager->~ParticleManager();
 	particleManager = new ParticleManager(Vector3(10000.0f, 10000.0f, 10000.0f), g, newN, runFor, methodText[method]);
 	particleManager->InitDiskSystem(500, 500 + newN * 20, 100);
@@ -250,10 +241,12 @@ void Scene::Restart()
 
 void Scene::ReadSetupFiles()
 {
+	//read in file
 	std::ifstream file("setup.txt");
 	std::string temp, tempValue;
 
 	std::string line;
+	//line by line
 	while (std::getline(file, line))
 	{
 		std::istringstream iss(line);
@@ -261,6 +254,7 @@ void Scene::ReadSetupFiles()
 		if (temp[0] == 'M')//method
 		{
 			method = std::stoi(tempValue);
+			methodNext = method;
 		}
 		else if (temp[0] == 'N')//N
 		{
@@ -279,6 +273,26 @@ void Scene::ReadSetupFiles()
 		{
 			theta = std::stof(tempValue);
 		}
+	}
+
+	//check values are valid
+	if (method <0 || method > 4)
+	{
+		method = 0;
+		methodNext = 0;
+	}
+	if (newN < 2)
+	{
+		newN = 2;
+	}
+	if (runFor < 1)
+	{
+		runFor = 1;
+		runForNext = 1;
+	}
+	if (theta <0 )
+	{
+		theta = 0.5;
 	}
 }
 
