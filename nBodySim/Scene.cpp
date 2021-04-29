@@ -116,7 +116,10 @@ void Scene::handleInput(float dt)
 	}
 	if (input->isKeyPressed('n') || input->isKeyPressed('N'))
 	{
-		newN++;
+		if (newN < 10000)
+		{
+			newN++;
+		}
 	}
 
 	// m changes method
@@ -284,6 +287,10 @@ void Scene::ReadSetupFiles()
 	if (newN < 2)
 	{
 		newN = 2;
+	}
+	if (newN >10000)
+	{
+		newN = 10000;
 	}
 	if (runFor < 1)
 	{
