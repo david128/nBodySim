@@ -245,7 +245,7 @@ void ParticleManager::PrintResults(float timeStep)
 	}
 
 
-	fileName = "./output/"+ std::to_string(n) +  "bodies_" + methodName + th+ "_TS_" + ts + "_RF_" + std::to_string(runFor) + "_times.csv";
+	fileName = "./output/times/"+ std::to_string(n) +  "bodies_" + methodName + th+ "_TS_" + ts + "_RF_" + std::to_string(runFor)+".csv";
 
 	outFile.open(fileName);//open this file
 
@@ -257,7 +257,7 @@ void ParticleManager::PrintResults(float timeStep)
 	outFile.close();//close file
 
 
-	fileName = "./output/" + std::to_string(n) + "bodies_" + methodName + "_TS_" + ts + "_RF_" + std::to_string(runFor) + "_energy.csv";
+	fileName = "./output/energy" + std::to_string(n) + "bodies_" + methodName + th + "_TS_" + ts + "_RF_" + std::to_string(runFor)+".csv";
 	outFile.open(fileName);//open this file
 
 
