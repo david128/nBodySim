@@ -257,7 +257,7 @@ void ParticleManager::PrintResults(float timeStep)
 	outFile.close();//close file
 
 
-	fileName = "./output/energy" + std::to_string(n) + "bodies_" + methodName + th + "_TS_" + ts + "_RF_" + std::to_string(runFor)+".csv";
+	fileName = "./output/energy/" + std::to_string(n) + "bodies_" + methodName + th + "_TS_" + ts + "_RF_" + std::to_string(runFor) + ".csv";
 	outFile.open(fileName);//open this file
 
 
