@@ -288,10 +288,6 @@ void Scene::ReadSetupFiles()
 	{
 		newN = 2;
 	}
-	if (newN >10000)
-	{
-		newN = 10000;
-	}
 	if (runFor < 1)
 	{
 		runFor = 1;

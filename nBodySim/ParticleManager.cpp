@@ -65,6 +65,7 @@ void ParticleManager::InitDiskSystem(float minR,float maxR, float height)
 	newP = new Particle(100, Vector3(0.0f, 0.0f, 0.0f),largeMass, Vector3(0.0f, 0.0f, 0.0f));
 	particlesArray[0] = *newP; //large mass particles orbit round
 	std::vector<float>rs;
+	std::cout << "Preparing Particles..." << std::endl;
 	for (int i = 1; i < n; i++)
 	{
 
@@ -80,7 +81,7 @@ void ParticleManager::InitDiskSystem(float minR,float maxR, float height)
 		particlesArray[i] = *newP;
 
 	}
-	
+	std::cout << "Done Preparing Particles" << std::endl;
 }
 
 void ParticleManager::InitMethod(int m, float th)
@@ -117,6 +118,7 @@ Particle* ParticleManager::GetParticlesArray()
 
 void ParticleManager::Update(float dt, float timeStep)
 {
+	std::cout << "Run " << ran << ":";
 	//sum energy to check accuracy
 	if (ran == sum * 10)
 	{
@@ -132,7 +134,7 @@ void ParticleManager::Update(float dt, float timeStep)
 
 	//find time
 	auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-	std::cout<< "Run "<< ran << " ran in "<<  duration.count() << " microseconds."<<  std::endl;
+	std::cout << " ran in "<<  duration.count() << " microseconds."<<  std::endl;
 
 
 	ran++;
