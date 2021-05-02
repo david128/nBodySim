@@ -20,16 +20,10 @@ public:
 	Particle* CreateRandomParticle();
 	void InitSystem();
 	void InitDiskSystem(float minR, float maxR, float height);
-
-
-
 	void InitMethod(int m, float th);
 
 	Particle* GetParticlesArray();
 	
-
-
-
 	void Update(float dt, float timeStep);
 	float SumEnergy();
 	void Reset();
