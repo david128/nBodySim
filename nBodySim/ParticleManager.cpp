@@ -7,6 +7,7 @@
 #include <fstream>
 
 
+
 ParticleManager::ParticleManager(Vector3 extents, float g, int numberOfParticles, int rf, std::string mN)
 {
 	grav = g;
@@ -63,7 +64,7 @@ void ParticleManager::InitDiskSystem(float minR,float maxR, float height)
 	float smallMass = 1; //mass of smaller 
 	newP = new Particle(100, Vector3(0.0f, 0.0f, 0.0f),largeMass, Vector3(0.0f, 0.0f, 0.0f));
 	particlesArray[0] = *newP; //large mass particles orbit round
-
+	std::vector<float>rs;
 	for (int i = 1; i < n; i++)
 	{
 
@@ -71,13 +72,15 @@ void ParticleManager::InitDiskSystem(float minR,float maxR, float height)
 		float theta = FindRandomFloat(0.0f,360.0f);
 		//random radius and h
 		float h = FindRandomFloat(-height, height);
-		float r = FindRandomFloat(minR,maxR);
+		float r = FindRandomFloat(minR,maxR) + float(i)*00.1f; //add on +0.001* i because particles were occasionally spawning in same position
+		rs.push_back(r);
 		float v =  sqrt((grav * largeMass) / r);
 
 		newP = new Particle(50, Vector3(r*cosf(theta), r * sinf(theta),height), smallMass = 10, Vector3(v*sinf(theta), -v*cosf(theta), 0));
 		particlesArray[i] = *newP;
 
 	}
+	
 }
 
 void ParticleManager::InitMethod(int m, float th)
