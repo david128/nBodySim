@@ -27,6 +27,8 @@ Particle::Particle()
 void Particle::DrawParticle()
 {
 
+	glColor3f(colour.x,colour.y,colour.z);
+
 	glPushMatrix();
 
 	//translate to position
@@ -74,5 +76,12 @@ void Particle::DrawParticle()
 		}
 	}
 	glPopMatrix();
+
+	glColor3f(1.0f, 1.0, 1.0);
+}
+
+void Particle::SetColour(Vector3 col)
+{
+	colour = col;
 }
 

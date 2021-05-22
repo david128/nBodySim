@@ -63,11 +63,13 @@ void ParticleManager::InitDiskSystem(float minR,float maxR, float height)
 	float largeMass = 1000000000000000000.0; //large mass
 	float smallMass = 1; //mass of smaller 
 	newP = new Particle(100, Vector3(0.0f, 0.0f, 0.0f),largeMass, Vector3(0.0f, 0.0f, 0.0f));
+	newP->SetColour(Vector3{ 1.0f,0.8f,0.0f });
 	particlesArray[0] = *newP; //large mass particles orbit round
 	std::vector<float>rs;
 	std::cout << "Preparing Particles..." << std::endl;
 	for (int i = 1; i < n; i++)
 	{
+
 
 		//theta = random float
 		float theta = FindRandomFloat(0.0f,360.0f);
@@ -78,6 +80,7 @@ void ParticleManager::InitDiskSystem(float minR,float maxR, float height)
 		float v =  sqrt((grav * largeMass) / r);
 
 		newP = new Particle(50, Vector3(r*cosf(theta), r * sinf(theta),height), smallMass = 10, Vector3(v*sinf(theta), -v*cosf(theta), 0));
+		newP->SetColour(Vector3{ FindRandomFloat(0.0f,1.0f),FindRandomFloat(0.0f,1.0f),FindRandomFloat(0.0f,1.0f) });
 		particlesArray[i] = *newP;
 
 	}
